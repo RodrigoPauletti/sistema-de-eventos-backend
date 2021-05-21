@@ -17,7 +17,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-dbPasswordDev ='mongodb://localhost/boilerplate';
+dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
 
 // for PRODUCTION
 // const MONGO_USERNAME = 'sammy';
@@ -30,5 +30,5 @@ dbPasswordDev ='mongodb://localhost/boilerplate';
 
 module.exports = {
   mongoURI: dbPasswordDev,
-  secret: 'yourSecretKey',
+  secret: "yourSecretKey",
 };
