@@ -71,6 +71,7 @@ if (process.env.NODE_ENV === "PROD") {
 // Initialize routes middleware
 app.use("/api/users", require("./routes/users"));
 app.use("/api/usersTypes", require("./routes/usersTypes"));
+app.use("/api/eventsCoverages", require("./routes/eventsCoverages"));
 
 // run at 3:10 AM -> delete old tokens
 const tokensCleanUp = new CronJob("10 3 * * *", function () {
