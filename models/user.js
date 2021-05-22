@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* !
 
 =========================================================
@@ -48,10 +47,13 @@ const UserSchema = new mongoose.Schema(
       default: false,
     },
     status: {
-      type: Number,
-      enum: [0, 1],
-      default: 1,
+      type: String,
+      enum: {
+        values: [0, 1],
+        message: 'Status inválido'
+      },
       required: true,
+      default: 1,
     },
   },
   { timestamps: true }

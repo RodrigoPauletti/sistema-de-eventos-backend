@@ -18,7 +18,6 @@
 
 */
 const express = require("express");
-// eslint-disable-next-line new-cap
 const router = express.Router();
 const bcrypt = require("bcrypt-nodejs");
 const nodemailer = require("nodemailer");
@@ -56,7 +55,6 @@ router.post("/edit", reqAuth, function (req, res) {
       const newvalues = { $set: { fullname: name, email } };
       User.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          // eslint-disable-next-line max-len
           res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
@@ -138,7 +136,6 @@ router.post("/forgotpassword", (req, res) => {
           from: '"Creative Tim" <' + smtpConf.auth.user + ">", // sender address
           to: email, // list of receivers
           subject: "Creative Tim Reset Password", // Subject line
-          // eslint-disable-next-line max-len
           html:
             '<h1>Hey,</h1><br><p>If you want to reset your password, please click on the following link:</p><p><a href="' +
             "http://localhost:3000/auth/confirm-password/" +
@@ -166,7 +163,6 @@ router.post("/register", (req, res) => {
     if (user) {
       res.json({ success: false, msg: "E-mail já existente" });
     } else if (password.length < 6) {
-      // eslint-disable-next-line max-len
       res.json({
         success: false,
         msg: "A senha deve conter, no mínimo, 6 caracteres",
@@ -188,7 +184,6 @@ router.post("/register", (req, res) => {
                 from: '"Creative Tim" <' + smtpConf.auth.user + ">",
                 to: email, // list of receivers
                 subject: "Creative Tim Confirm Account", // Subject line
-                // eslint-disable-next-line max-len
                 html:
                   '<h1>Hey,</h1><br><p>Confirm your new account </p><p><a href="' +
                   "http://localhost:3000/auth/confirm-email/" +
@@ -202,13 +197,11 @@ router.post("/register", (req, res) => {
                   smtpConf.auth.user +
                   "</a></p>", // html body
               });
-              // eslint-disable-next-line max-len
               res.json({
                 success: true,
                 msg: "Usuário criado com sucesso",
               });
             }
-            // eslint-disable-next-line max-len
             res.json({
               success: true,
               userID: user._id,

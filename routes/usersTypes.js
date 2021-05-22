@@ -1,29 +1,6 @@
-/* eslint-disable max-len */
-/* !
-
-=========================================================
-* Argon React NodeJS - v1.0.0
-=========================================================
-
-* Product Page: https://argon-dashboard-react-nodejs.creative-tim.com/
-* Copyright 2020 Creative Tim (https://https://www.creative-tim.com//)
-* Copyright 2020 ProjectData (https://projectdata.dev/)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react-nodejs/blob/main/README.md)
-
-* Coded by Creative Tim & ProjectData
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 const express = require("express");
-// eslint-disable-next-line new-cap
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const config = require("../config/keys");
 const UserType = require("../models/userType");
-const User = require("../models/user");
 const reqAuth = require("../config/safeRoutes").reqAuth;
 // route /admin/users/
 
@@ -41,6 +18,33 @@ router.post("/all", reqAuth, function (req, res) {
   });
 });
 
+router.post("/create", (req, res) => {
+  const { name, permission, status } = req.body;
+
+  const query = { name, permission, status };
+  UserType.create(query, function (err, userType) {
+    if (err) {
+      const firstErrorKey = Object.keys(err.errors).shift();
+      if(firstErrorKey){
+        return res.status(500).json({
+          success: false,
+          msg: err.errors[firstErrorKey].message,
+        });
+      }
+      return res.status(500).json({
+        success: false,
+        msg: err,
+      });
+    }
+
+    res.json({
+      success: true,
+      userTypeID: userType._id,
+      msg: "Tipo de usuário criado com sucesso",
+    });
+  });
+});
+
 router.post("/edit", reqAuth, function (req, res) {
   const { userTypeID, name, permission, status } = req.body;
 
@@ -50,7 +54,6 @@ router.post("/edit", reqAuth, function (req, res) {
       const newvalues = { $set: { name, permission, status } };
       UserType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          // eslint-disable-next-line max-len
           res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
@@ -61,22 +64,6 @@ router.post("/edit", reqAuth, function (req, res) {
     } else {
       res.json({ success: false });
     }
-  });
-});
-
-router.post("/create", (req, res) => {
-  const { name, permission, status } = req.body;
-
-  const query = { name, permission, status };
-  UserType.create(query, function (err, userType) {
-    if (err) throw err;
-
-    // eslint-disable-next-line max-len
-    res.json({
-      success: true,
-      userTypeID: userType._id,
-      msg: "Tipo de usuário criado com sucesso",
-    });
   });
 });
 
