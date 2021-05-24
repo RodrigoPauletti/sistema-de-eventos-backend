@@ -30,7 +30,7 @@ const EventCategorySchema = new mongoose.Schema(
     },
   },
   {
-    collection: "events_coverages",
+    collection: "events_categories",
     timestamps: true,
   }
 );
