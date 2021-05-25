@@ -76,6 +76,7 @@ app.use("/api/eventsCategories", require("./routes/eventsCategories"));
 app.use("/api/lecturers", require("./routes/lecturers"));
 app.use("/api/organizers", require("./routes/organizers"));
 app.use("/api/eventsTypes", require("./routes/eventsTypes"));
+app.use("/api/eventsDates", require("./routes/eventsDates"));
 app.use("/api/eventsExpensesTypes", require("./routes/eventsExpensesTypes"));
 
 // run at 3:10 AM -> delete old tokens
