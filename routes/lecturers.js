@@ -25,10 +25,10 @@ router.post("/create", (req, res) => {
   Lecturer.create(query, function (err, lecturer) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
-        // Duplicate username
+        // Duplicate name
         return res
           .status(422)
-          .send({ success: false, message: "Palestrante já existe!" });
+          .send({ success: false, message: "O palestrante já existe!" });
       }
 
       const firstErrorKey = Object.keys(err.errors).shift();
