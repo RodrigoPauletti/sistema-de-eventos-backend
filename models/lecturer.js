@@ -8,13 +8,14 @@ const LecturerSchema = new mongoose.Schema(
       index: true,
       unique: true,
       trim: true,
-      validate: {
-        validator: function (v) {
-          if (v && v.length) var re = /^[a-z]$/i;
-          return re.test(v);
-        },
-        message: "O nome já está sendo utilizado",
-      },
+      // TODO: Validate unique name
+      // validate: {
+      //   validator: function (v) {
+      //     if (v && v.length) var re = /^[a-z]$/i;
+      //     return re.test(v);
+      //   },
+      //   message: "O nome do palestrante já está sendo utilizado",
+      // },
     },
     office: {
       type: String,
