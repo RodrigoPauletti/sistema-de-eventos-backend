@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const EventCategory = require("../models/eventCategory");
 const reqAuth = require("../config/safeRoutes").reqAuth;
-const mongoose = require('mongoose');
 // route /admin/eventsCategories/
 
 router.post("/all", reqAuth, function (req, res) {
@@ -26,7 +25,7 @@ router.post("/create", (req, res) => {
   EventCategory.create(query, function (err, eventCategory) {
     if (err) {
       const firstErrorKey = Object.keys(err.errors).shift();
-      if(firstErrorKey){
+      if (firstErrorKey) {
         return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
@@ -47,12 +46,20 @@ router.post("/create", (req, res) => {
 });
 
 router.post("/edit", reqAuth, function (req, res) {
-  const { eventCategoryID, name, secondary_field, secondary_field_name, status } = req.body;
+  const {
+    eventCategoryID,
+    name,
+    secondary_field,
+    secondary_field_name,
+    status,
+  } = req.body;
 
   EventCategory.find({ _id: eventCategoryID }).then((eventCategory) => {
     if (eventCategory.length == 1) {
       const query = { _id: eventCategory[0]._id };
-      const newvalues = { $set: { name, secondary_field, secondary_field_name, status } };
+      const newvalues = {
+        $set: { name, secondary_field, secondary_field_name, status },
+      };
       EventCategory.updateOne(query, newvalues, function (err, cb) {
         if (err) {
           res.json({
