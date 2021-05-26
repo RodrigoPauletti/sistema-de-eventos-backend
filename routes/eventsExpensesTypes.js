@@ -2,19 +2,19 @@ const express = require("express");
 const router = express.Router();
 const EventExpenseType = require("../models/eventExpenseType");
 const reqAuth = require("../config/safeRoutes").reqAuth;
-// route /admin/eventExpensesTypes/
+// route /admin/eventsExpensesTypes/
 
 router.post("/all", reqAuth, function (req, res) {
-  EventExpenseType.find({}, function (err, eventExpensesTypes) {
+  EventExpenseType.find({}, function (err, eventsExpensesTypes) {
     if (err) {
       res.json({ success: false });
     }
-    eventExpensesTypes = eventExpensesTypes.map(function (item) {
+    eventsExpensesTypes = eventsExpensesTypes.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventExpensesTypes: eventExpensesTypes });
+    res.json({ success: true, eventsExpensesTypes: eventsExpensesTypes });
   });
 });
 
