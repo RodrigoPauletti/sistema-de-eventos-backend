@@ -79,6 +79,7 @@ app.use("/api/eventsTypes", require("./routes/eventsTypes"));
 app.use("/api/eventsDates", require("./routes/eventsDates"));
 app.use("/api/eventsExpensesTypes", require("./routes/eventsExpensesTypes"));
 app.use("/api/eventsExpenses", require("./routes/eventsExpenses"));
+app.use("/api/eventsLecturers", require("./routes/eventsLecturers"));
 
 // run at 3:10 AM -> delete old tokens
 const tokensCleanUp = new CronJob("10 3 * * *", function () {
