@@ -71,13 +71,17 @@ if (process.env.NODE_ENV === "PROD") {
 // Initialize routes middleware
 app.use("/api/users", require("./routes/users"));
 app.use("/api/usersTypes", require("./routes/usersTypes"));
-app.use("/api/eventsCoverages", require("./routes/eventsCoverages"));
-app.use("/api/eventsCategories", require("./routes/eventsCategories"));
+
 app.use("/api/lecturers", require("./routes/lecturers"));
 app.use("/api/organizers", require("./routes/organizers"));
+
+app.use("/api/events", require("./routes/events"));
+app.use("/api/eventsCoverages", require("./routes/eventsCoverages"));
+app.use("/api/eventsCategories", require("./routes/eventsCategories"));
 app.use("/api/eventsTypes", require("./routes/eventsTypes"));
-app.use("/api/eventsDates", require("./routes/eventsDates"));
 app.use("/api/eventsExpensesTypes", require("./routes/eventsExpensesTypes"));
+
+app.use("/api/eventsDates", require("./routes/eventsDates"));
 app.use("/api/eventsExpenses", require("./routes/eventsExpenses"));
 app.use("/api/eventsLecturers", require("./routes/eventsLecturers"));
 app.use("/api/eventsOrganizers", require("./routes/eventsOrganizers"));
