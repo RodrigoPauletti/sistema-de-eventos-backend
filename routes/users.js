@@ -33,7 +33,7 @@ router.post("/all", reqAuth, async function (req, res) {
   try {
     let users = await User.find()
       .populate("user_type_id", "name")
-      .select("fullname");
+      .select("name email");
     users = users.map(function (item) {
       const x = item;
       x.password = undefined;
@@ -52,7 +52,7 @@ router.post("/edit", reqAuth, function (req, res) {
   User.find({ _id: userID }).then((user) => {
     if (user.length == 1) {
       const query = { _id: user[0]._id };
-      const newvalues = { $set: { fullname: name, email } };
+      const newvalues = { $set: { name, email } };
       User.updateOne(query, newvalues, function (err, cb) {
         if (err) {
           res.json({
@@ -171,7 +171,7 @@ router.post("/register", (req, res) => {
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, null, (err, hash) => {
           if (err) throw err;
-          const query = { fullname: name, email, password: hash };
+          const query = { name, email, password: hash };
           User.create(query, function (err, user) {
             if (err) throw err;
 

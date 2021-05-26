@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema(
       default: "60a7126b48bcd0d3214fd2a3",
       required: true,
     },
-    fullname: {
+    name: {
       type: String,
       required: true,
     },
@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: {
         values: [0, 1],
-        message: 'Status inválido'
+        message: "Status inválido",
       },
       required: true,
       default: 1,
