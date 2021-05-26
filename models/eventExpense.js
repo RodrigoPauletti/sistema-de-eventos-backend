@@ -17,7 +17,7 @@ const EventExpenseSchema = new mongoose.Schema(
       required: true,
     },
     amount: {
-      type: mongoose.Types.Decimal128,
+      type: Number,
       required: true,
     },
     comments: {
