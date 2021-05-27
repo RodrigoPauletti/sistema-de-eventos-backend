@@ -70,7 +70,6 @@ const EventSchema = new mongoose.Schema(
     },
     schedule: {
       type: String,
-      required: true,
     },
     details: {
       type: String,
