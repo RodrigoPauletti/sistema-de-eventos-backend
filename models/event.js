@@ -21,10 +21,16 @@ const EventSchema = new mongoose.Schema(
       ref: "EventsCategories",
       required: true,
     },
+    category_second_field_value: {
+      type: String,
+    },
     coverage_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EventsCoverages",
       required: true,
+    },
+    coverage_second_field_value: {
+      type: String,
     },
     workload: {
       type: Number,
