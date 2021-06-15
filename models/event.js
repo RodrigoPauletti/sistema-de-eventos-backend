@@ -70,7 +70,7 @@ const EventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    justification: {
+    reason: {
       type: String,
       required: true,
     },
