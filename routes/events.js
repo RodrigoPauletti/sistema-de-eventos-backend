@@ -89,9 +89,22 @@ router.post("/create", (req, res) => {
   });
 });
 
-router.post("/edit", reqAuth, function (req, res) {
+router.post("/get/:eventID", reqAuth, function (req, res) {
+  const { eventID } = req.params;
+
+  Event.findOne({ _id: eventID }).then((event) => {
+    if (event) {
+      res.json({ success: true, event });
+    } else {
+      res.json({ success: false });
+    }
+  });
+});
+
+router.post("/edit/:eventID", reqAuth, function (req, res) {
+  const { eventID } = req.params;
+
   const {
-    eventID,
     event_type_id,
     user_id,
     name,
@@ -157,8 +170,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 
