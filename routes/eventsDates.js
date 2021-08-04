@@ -19,16 +19,16 @@ router.post("/all", reqAuth, function (req, res) {
 });
 
 router.post("/create", (req, res) => {
-  const { event_id, date, start_time, end_time, status } = req.body;
+  const { event_id, start_date, end_date, status } = req.body;
 
-  const query = { event_id, date, start_time, end_time, status };
+  const query = { event_id, start_date, end_date, status };
   EventDate.create(query, function (err, eventDate) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
         // Duplicate name
         return res
           .status(422)
-          .send({ success: false, message: "O tipo de evento já existe!" });
+          .send({ success: false, message: "A data do evento já existe!" });
       }
 
       const firstErrorKey = Object.keys(err.errors).shift();
@@ -45,20 +45,31 @@ router.post("/create", (req, res) => {
     res.json({
       success: true,
       eventDateID: eventDate._id,
-      msg: "Tipo de evento criado com sucesso",
+      msg: "Data do evento criada com sucesso",
     });
   });
 });
 
+router.post("/get/:eventID", reqAuth, function (req, res) {
+  const { eventID } = req.params;
+
+  EventDate.findOne({ event_id: eventID }).then((eventDate) => {
+    if (eventDate) {
+      res.json({ success: true, eventDate });
+    } else {
+      res.json({ success: false });
+    }
+  });
+});
+
 router.post("/edit", reqAuth, function (req, res) {
-  const { eventDateID, event_id, date, start_time, end_time, status } =
-    req.body;
+  const { eventDateID, event_id, start_date, end_date, status } = req.body;
 
   EventDate.find({ _id: eventDateID }).then((eventDate) => {
     if (eventDate.length == 1) {
       const query = { _id: eventDate[0]._id };
       const newvalues = {
-        $set: { event_id, date, start_time, end_time, status },
+        $set: { event_id, start_date, end_date, status },
       };
       EventDate.updateOne(query, newvalues, function (err, cb) {
         if (err) {

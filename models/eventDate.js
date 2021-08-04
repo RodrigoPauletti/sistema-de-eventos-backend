@@ -4,20 +4,16 @@ const EventDateSchema = new mongoose.Schema(
   {
     event_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Events",
+      ref: "Event",
       required: true,
     },
-    date: {
+    start_date: {
       type: Date,
       required: true,
     },
-    start_time: {
-      hours: { type: Number, required: true },
-      minutes: { type: Number, required: true },
-    },
-    end_time: {
-      hours: { type: Number, required: true },
-      minutes: { type: Number, required: true },
+    end_date: {
+      type: Date,
+      required: true,
     },
   },
   {

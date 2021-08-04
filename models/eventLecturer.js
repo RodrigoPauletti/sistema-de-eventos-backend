@@ -4,7 +4,7 @@ const EventLecturerSchema = new mongoose.Schema(
   {
     event_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Events",
+      ref: "Event",
       required: true,
     },
     lecturer_id: {

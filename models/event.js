@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
+// const EventDate = require("../models/eventDate");
 
 const EventSchema = new mongoose.Schema(
   {
     event_type_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "EventsTypes",
+      ref: "EventType",
       required: true,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
     name: {
@@ -18,7 +19,7 @@ const EventSchema = new mongoose.Schema(
     },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "EventsCategories",
+      ref: "EventCategory",
       required: true,
     },
     category_second_field_value: {
@@ -26,7 +27,7 @@ const EventSchema = new mongoose.Schema(
     },
     coverage_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "EventsCoverages",
+      ref: "EventCoverage",
       required: true,
     },
     coverage_second_field_value: {
@@ -104,8 +105,17 @@ const EventSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
   }
 );
+
+EventSchema.virtual("dates", {
+  ref: "EventDate",
+  localField: "_id",
+  foreignField: "event_id",
+});
 
 const Event = mongoose.model("Event", EventSchema);
 

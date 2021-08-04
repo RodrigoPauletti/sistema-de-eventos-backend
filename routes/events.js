@@ -2,20 +2,58 @@ const express = require("express");
 const router = express.Router();
 const Event = require("../models/event");
 const reqAuth = require("../config/safeRoutes").reqAuth;
+const ActiveSession = require("../models/activeSession");
 // route /admin/events/
 
-router.post("/all", reqAuth, function (req, res) {
-  Event.find({}, function (err, events) {
-    if (err) {
-      res.json({ success: false });
-    }
-    events = events.map(function (item) {
-      const x = item;
-      x.__v = undefined;
-      return x;
-    });
-    res.json({ success: true, events: events });
-  });
+router.post("/all", reqAuth, async function (req, res) {
+  try {
+    // const token = String(req.headers.authorization);
+    // const session = await ActiveSession.find({ token: token });
+    let filter = {};
+    // if(user){ /* TODO: Se usuário não for Admin ou outro cargo, deve mostrar apenas eventos relacionados à eles */
+    //   filter = { user_id: session[0].userId };
+    // }
+    return await Event.find(filter)
+      .populate([
+        {
+          path: "dates",
+          // select: "date start_time end_time",
+          select: "start_date end_date",
+          options: {
+            sort: {
+              start_date: 1,
+              end_date: 1,
+              // date: 1,
+              // "start_time.hours": 1,
+              // "start_time.minutes": -1,
+              // "end_time.hours": 1,
+              // "end_time.minutes": 1,
+            },
+          },
+        },
+        {
+          path: "event_type_id",
+          select: "name",
+        },
+        {
+          path: "user_id",
+          select: "name",
+        },
+      ])
+      .exec((err, events) => {
+        if (err) {
+          return res.json({ success: false, msg: err });
+        }
+        events = events.map(function (item) {
+          const x = item;
+          x.__v = undefined;
+          return x;
+        });
+        return res.json({ success: true, events });
+      });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
 });
 
 router.post("/create", (req, res) => {
@@ -81,7 +119,7 @@ router.post("/create", (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       eventID: event._id,
       msg: "Evento criado com sucesso",
@@ -94,10 +132,9 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
 
   Event.findOne({ _id: eventID }).then((event) => {
     if (event) {
-      res.json({ success: true, event });
-    } else {
-      res.json({ success: false });
+      return res.json({ success: true, event });
     }
+    return res.json({ success: false });
   });
 });
 
@@ -158,15 +195,15 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
       };
       Event.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+          return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });

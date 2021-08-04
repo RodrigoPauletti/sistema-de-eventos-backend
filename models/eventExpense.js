@@ -4,12 +4,12 @@ const EventExpenseSchema = new mongoose.Schema(
   {
     event_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Events",
+      ref: "Event",
       required: true,
     },
     event_expense_type_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "EventsExpensesTypes",
+      ref: "EventExpenseType",
       required: true,
     },
     provider: {
