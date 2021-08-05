@@ -13,21 +13,15 @@ router.post("/all", reqAuth, async function (req, res) {
     // if(user){ /* TODO: Se usuário não for Admin ou outro cargo, deve mostrar apenas eventos relacionados à eles */
     //   filter = { user_id: session[0].userId };
     // }
-    return await Event.find(filter)
+    return Event.find(filter)
       .populate([
         {
           path: "dates",
-          // select: "date start_time end_time",
           select: "start_date end_date",
           options: {
             sort: {
               start_date: 1,
               end_date: 1,
-              // date: 1,
-              // "start_time.hours": 1,
-              // "start_time.minutes": -1,
-              // "end_time.hours": 1,
-              // "end_time.minutes": 1,
             },
           },
         },
@@ -45,8 +39,41 @@ router.post("/all", reqAuth, async function (req, res) {
           return res.json({ success: false, msg: err });
         }
         events = events.map(function (item) {
-          const x = item;
+          const x = item.toJSON();
           x.__v = undefined;
+          x.date = "";
+          if (item.dates && item.dates.length) {
+            if (item.dates.length === 1) {
+              // Event has just one date
+              const startDate = toDateFormatted(item.dates[0].start_date);
+              const endDate = toDateFormatted(item.dates[0].end_date);
+              if (
+                endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate)
+              ) {
+                // If end_date is bigger then and another day of start_date
+                x.date = `${startDate} até ${endDate}`;
+              } else {
+                x.date = startDate;
+              }
+            } else {
+              // Event has more than one date
+              const startDate = toDateFormatted(
+                findMinStartDateOnObject(item.dates).start_date
+              );
+              const endDate = toDateFormatted(
+                findMaxEndDateOnObject(item.dates).end_date
+              );
+              if (
+                endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate)
+              ) {
+                // If end_date is bigger then and another day of start_date
+                x.date = `${startDate} até ${endDate}`;
+              } else {
+                x.date = startDate;
+              }
+            }
+          }
+          x.dates = undefined;
           return x;
         });
         return res.json({ success: true, events });
@@ -104,38 +131,49 @@ router.post("/create", (req, res) => {
     total_amount,
     status,
   };
-  Event.create(query, function (err, event) {
-    if (err) {
-      const firstErrorKey = Object.keys(err.errors).shift();
-      if (firstErrorKey) {
+
+  try {
+    Event.create(query, function (err, event) {
+      if (err) {
+        const firstErrorKey = Object.keys(err.errors).shift();
+        if (firstErrorKey) {
+          return res.status(500).json({
+            success: false,
+            msg: err.errors[firstErrorKey].message,
+          });
+        }
         return res.status(500).json({
           success: false,
-          msg: err.errors[firstErrorKey].message,
+          msg: err,
         });
       }
-      return res.status(500).json({
-        success: false,
-        msg: err,
-      });
-    }
 
-    return res.json({
-      success: true,
-      eventID: event._id,
-      msg: "Evento criado com sucesso",
+      return res.json({
+        success: true,
+        eventID: event._id,
+        msg: "Evento criado com sucesso",
+      });
     });
-  });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
 });
 
 router.post("/get/:eventID", reqAuth, function (req, res) {
   const { eventID } = req.params;
 
-  Event.findOne({ _id: eventID }).then((event) => {
-    if (event) {
-      return res.json({ success: true, event });
-    }
-    return res.json({ success: false });
-  });
+  try {
+    return Event.findOne({ _id: eventID })
+      .populate("dates")
+      .then((event) => {
+        if (event) {
+          return res.json({ success: true, event });
+        }
+        return res.json({ success: false });
+      });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
 });
 
 router.post("/edit/:eventID", reqAuth, function (req, res) {
@@ -165,49 +203,82 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
     status,
   } = req.body;
 
-  Event.find({ _id: eventID }).then((event) => {
-    if (event.length == 1) {
-      const query = { _id: event[0]._id };
-      const newvalues = {
-        $set: {
-          event_type_id,
-          user_id,
-          name,
-          category_id,
-          category_second_field_value,
-          coverage_id,
-          coverage_second_field_value,
-          workload,
-          audience_estimate,
-          online,
-          link,
-          place,
-          ticket,
-          objective,
-          reason,
-          schedule,
-          details,
-          resources,
-          receipt_amount,
-          total_amount,
-          status,
-        },
-      };
-      Event.updateOne(query, newvalues, function (err, cb) {
-        if (err) {
-          return res.json({
-            success: false,
-            msg: "Ocorreu um erro. Favor contatar o administrador",
-          });
-        }
-        return res.json({ success: true });
-      });
-    } else {
-      return res.json({ success: false });
-    }
-  });
+  try {
+    Event.find({ _id: eventID }).then((event) => {
+      if (event.length === 1) {
+        const query = { _id: event[0]._id };
+        const newvalues = {
+          $set: {
+            event_type_id,
+            user_id,
+            name,
+            category_id,
+            category_second_field_value,
+            coverage_id,
+            coverage_second_field_value,
+            workload,
+            audience_estimate,
+            online,
+            link,
+            place,
+            ticket,
+            objective,
+            reason,
+            schedule,
+            details,
+            resources,
+            receipt_amount,
+            total_amount,
+            status,
+          },
+        };
+        Event.updateOne(query, newvalues, function (err, cb) {
+          if (err) {
+            return res.json({
+              success: false,
+              msg: "Ocorreu um erro. Favor contatar o administrador",
+            });
+          }
+          return res.json({ success: true });
+        });
+      } else {
+        return res.json({ success: false });
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
 });
 
 // TODO: Create delete route
 
 module.exports = router;
+
+function toDateFormatted(dateToFormat) {
+  const date = new Date(dateToFormat).toISOString().replace(/T(\S+)$/, ""); // Replacing the 'T00:00:00.000Z' part of the date
+  const dateSplitted = date.split("-");
+  return `${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`;
+}
+
+function findMinStartDateOnObject(object) {
+  return object.reduce(function (a, b) {
+    return new Date(a.start_date).getTime() < new Date(b.start_date).getTime()
+      ? a
+      : b;
+  });
+}
+
+function findMaxEndDateOnObject(object) {
+  return object.reduce(function (a, b) {
+    return new Date(a.end_date).getTime() > new Date(b.end_date).getTime()
+      ? a
+      : b;
+  });
+}
+
+function endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate) {
+  return (
+    new Date(endDate).getTime() > new Date(startDate).getTime() &&
+    new Date(endDate).getDay() !== new Date(startDate).getDay()
+  );
+}
