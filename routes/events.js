@@ -164,9 +164,21 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
 
   try {
     return Event.findOne({ _id: eventID })
-      .populate("dates")
+      .populate([{ path: "dates", select: "start_date end_date" }])
       .then((event) => {
         if (event) {
+          if (event.dates && event.dates.length) {
+            event.dates = event.dates.map(function (date) {
+              const x = date.toJSON();
+              x.date = toDateFormatted(date.start_date, true);
+              x.start = transformDateToTime(date.start_date);
+              x.end = transformDateToTime(date.end_date);
+              x.start_date = undefined;
+              x.end_date = undefined;
+              return x;
+            });
+            return res.json({ success: true, event });
+          }
           return res.json({ success: true, event });
         }
         return res.json({ success: false });
@@ -254,10 +266,24 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
 
 module.exports = router;
 
-function toDateFormatted(dateToFormat) {
+function toDateFormatted(dateToFormat, ymdFormat = false) {
   const date = new Date(dateToFormat).toISOString().replace(/T(\S+)$/, ""); // Replacing the 'T00:00:00.000Z' part of the date
   const dateSplitted = date.split("-");
+  if (ymdFormat) {
+    return date;
+  }
   return `${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`;
+}
+
+function transformDateToTime(dateToTransform) {
+  const date = new Date(dateToTransform);
+  const hours =
+    date.getUTCHours() < 10 ? `0${date.getUTCHours()}` : date.getUTCHours();
+  const minutes =
+    date.getUTCMinutes() < 10
+      ? `0${date.getUTCMinutes()}`
+      : date.getUTCMinutes();
+  return `${hours}:${minutes}`;
 }
 
 function findMinStartDateOnObject(object) {
