@@ -51,6 +51,8 @@ router.post("/create", (req, res) => {
   });
 });
 
+// TODO: Create get route
+
 router.post("/edit", reqAuth, function (req, res) {
   const { organizerID, event_id, lecturer_id, type } = req.body;
 
@@ -74,8 +76,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 

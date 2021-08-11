@@ -14,7 +14,7 @@ router.post("/all", reqAuth, function (req, res) {
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventsExpensesTypes: eventsExpensesTypes });
+    res.json(eventsExpensesTypes);
   });
 });
 
@@ -51,6 +51,8 @@ router.post("/create", (req, res) => {
   });
 });
 
+// TODO: Create get route
+
 router.post("/edit", reqAuth, function (req, res) {
   const { organizerID, name, status } = req.body;
 
@@ -74,8 +76,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 

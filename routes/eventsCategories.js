@@ -14,7 +14,7 @@ router.post("/all", reqAuth, function (req, res) {
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventsCategories: eventsCategories });
+    res.json(eventsCategories);
   });
 });
 
@@ -45,6 +45,8 @@ router.post("/create", (req, res) => {
   });
 });
 
+// TODO: Create get route
+
 router.post("/edit", reqAuth, function (req, res) {
   const {
     eventCategoryID,
@@ -74,8 +76,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 

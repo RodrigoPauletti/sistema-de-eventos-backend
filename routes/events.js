@@ -76,7 +76,7 @@ router.post("/all", reqAuth, async function (req, res) {
           x.dates = undefined;
           return x;
         });
-        return res.json({ success: true, events });
+        return res.json(events);
       });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
@@ -154,6 +154,7 @@ router.post("/create", (req, res) => {
         msg: "Evento criado com sucesso",
       });
     });
+    return res.json({ success: false });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
   }
@@ -164,22 +165,24 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
 
   try {
     return Event.findOne({ _id: eventID })
-      .populate([{ path: "dates", select: "start_date end_date" }])
+      .populate([
+        { path: "user_id", select: "name" },
+        { path: "dates", select: "start_date end_date" },
+      ])
       .then((event) => {
         if (event) {
           if (event.dates && event.dates.length) {
             event.dates = event.dates.map(function (date) {
               const x = date.toJSON();
               x.date = toDateFormatted(date.start_date, true);
-              x.start = transformDateToTime(date.start_date);
-              x.end = transformDateToTime(date.end_date);
+              x.start_time = transformDateToTime(date.start_date);
+              x.end_time = transformDateToTime(date.end_date);
               x.start_date = undefined;
               x.end_date = undefined;
               return x;
             });
-            return res.json({ success: true, event });
           }
-          return res.json({ success: true, event });
+          return res.json(event);
         }
         return res.json({ success: false });
       });

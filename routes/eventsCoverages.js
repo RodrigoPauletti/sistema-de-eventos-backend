@@ -14,7 +14,7 @@ router.post("/all", reqAuth, function (req, res) {
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventsCoverages: eventsCoverages });
+    res.json(eventsCoverages);
   });
 });
 
@@ -25,7 +25,7 @@ router.post("/create", (req, res) => {
   EventCoverage.create(query, function (err, eventCoverage) {
     if (err) {
       const firstErrorKey = Object.keys(err.errors).shift();
-      if(firstErrorKey){
+      if (firstErrorKey) {
         return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
@@ -45,13 +45,23 @@ router.post("/create", (req, res) => {
   });
 });
 
+// TODO: Create get route
+
 router.post("/edit", reqAuth, function (req, res) {
-  const { eventCoverageID, name, secondary_field, secondary_field_name, status } = req.body;
+  const {
+    eventCoverageID,
+    name,
+    secondary_field,
+    secondary_field_name,
+    status,
+  } = req.body;
 
   EventCoverage.find({ _id: eventCoverageID }).then((eventCoverage) => {
     if (eventCoverage.length == 1) {
       const query = { _id: eventCoverage[0]._id };
-      const newvalues = { $set: { name, secondary_field, secondary_field_name, status } };
+      const newvalues = {
+        $set: { name, secondary_field, secondary_field_name, status },
+      };
       EventCoverage.updateOne(query, newvalues, function (err, cb) {
         if (err) {
           res.json({
@@ -66,8 +76,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 

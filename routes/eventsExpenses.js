@@ -52,6 +52,8 @@ router.post("/create", (req, res) => {
   });
 });
 
+// TODO: Create get route
+
 router.post("/edit", reqAuth, function (req, res) {
   const {
     organizerID,
@@ -82,8 +84,6 @@ router.post("/edit", reqAuth, function (req, res) {
     }
   });
 });
-
-// TODO: Create update route
 
 // TODO: Create delete route
 

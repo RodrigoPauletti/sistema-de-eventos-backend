@@ -86,8 +86,6 @@ router.post("/edit", reqAuth, function (req, res) {
   });
 });
 
-// TODO: Create update route
-
 // TODO: Create delete route
 
 module.exports = router;
