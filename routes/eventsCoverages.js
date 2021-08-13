@@ -7,14 +7,23 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventCoverage.find({}, function (err, eventsCoverages) {
     if (err) {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
     eventsCoverages = eventsCoverages.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    res.json(eventsCoverages);
+    return res.json(eventsCoverages);
+  });
+});
+
+router.post("/allActivated", reqAuth, function (req, res) {
+  EventCoverage.find({ status: "1" }, function (err, eventsCoverages) {
+    if (err) {
+      return res.json({ success: false });
+    }
+    return res.json(eventsCoverages);
   });
 });
 
@@ -37,7 +46,7 @@ router.post("/create", (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       eventCoverageID: eventCoverage._id,
       msg: "Abrangência criada com sucesso",
@@ -64,15 +73,15 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventCoverage.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+          return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });

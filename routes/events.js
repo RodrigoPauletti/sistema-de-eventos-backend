@@ -3,8 +3,9 @@ const router = express.Router();
 const Event = require("../models/event");
 const reqAuth = require("../config/safeRoutes").reqAuth;
 const ActiveSession = require("../models/activeSession");
-// route /admin/events/
+const faker = require("faker");
 
+// route /admin/events/
 router.post("/all", reqAuth, async function (req, res) {
   try {
     // const token = String(req.headers.authorization);
@@ -154,7 +155,7 @@ router.post("/create", (req, res) => {
         msg: "Evento criado com sucesso",
       });
     });
-    return res.json({ success: false });
+    // return res.status(500).json({ success: false });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
   }
@@ -265,7 +266,25 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
   }
 });
 
-// TODO: Create delete route
+router.delete("/:eventID", reqAuth, function (req, res) {
+  const { eventID } = req.params;
+
+  try {
+    Event.findByIdAndDelete({ _id: eventID }).then((event) => {
+      if (event) {
+        // setTimeout(() => {
+        return res.json({ success: true });
+        // }, 2000);
+      } else {
+        return res
+          .status(500)
+          .json({ success: false, msg: "Erro ao deletar o evento" });
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
+});
 
 module.exports = router;
 
