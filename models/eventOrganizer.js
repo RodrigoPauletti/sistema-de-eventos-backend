@@ -9,7 +9,7 @@ const EventOrganizerSchema = new mongoose.Schema(
     },
     organizer_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Organizers",
+      ref: "Organizer",
       required: true,
     },
     workload: {

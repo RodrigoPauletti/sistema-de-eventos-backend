@@ -116,6 +116,11 @@ EventSchema.virtual("dates", {
   localField: "_id",
   foreignField: "event_id",
 });
+EventSchema.virtual("lecturers", {
+  ref: "EventLecturer",
+  localField: "_id",
+  foreignField: "event_id",
+});
 
 const Event = mongoose.model("Event", EventSchema);
 

@@ -169,6 +169,14 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
       .populate([
         { path: "user_id", select: "name" },
         { path: "dates", select: "start_date end_date" },
+        {
+          path: "lecturers",
+          populate: {
+            path: "event",
+            model: "Event",
+          },
+        },
+        // { path: "lecturers", select: "name" },
       ])
       .then((event) => {
         if (event) {
