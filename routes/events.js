@@ -171,12 +171,9 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
         { path: "dates", select: "start_date end_date" },
         {
           path: "lecturers",
-          populate: {
-            path: "event",
-            model: "Event",
-          },
+          select: "lecturer_id type",
+          populate: { path: "lecturer_id", select: "name office lattes" },
         },
-        // { path: "lecturers", select: "name" },
       ])
       .then((event) => {
         if (event) {
@@ -188,6 +185,19 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
               x.end_time = transformDateToTime(date.end_date);
               x.start_date = undefined;
               x.end_date = undefined;
+              return x;
+            });
+          }
+          if (event.lecturers && event.lecturers.length) {
+            event.lecturers = event.lecturers.map(function (lecturer) {
+              const x = lecturer.toJSON();
+              x.name = lecturer.lecturer_id.name;
+              x.office = lecturer.lecturer_id.office;
+              x.lattes = lecturer.lecturer_id.lattes;
+              x.guest = lecturer.type === "guest";
+              x.type = undefined;
+              x.lecturer_id = undefined;
+              x.event_id = undefined;
               return x;
             });
           }
