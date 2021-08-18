@@ -19,9 +19,9 @@ router.post("/all", reqAuth, function (req, res) {
 });
 
 router.post("/create", (req, res) => {
-  const { name, office, func, status } = req.body;
+  const { name, identification, /* office, */ status } = req.body;
 
-  const query = { name, office, func, status };
+  const query = { name, identification, /* office, */ status };
   Organizer.create(query, function (err, organizer) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
@@ -53,13 +53,13 @@ router.post("/create", (req, res) => {
 // TODO: Create get route
 
 router.post("/edit", reqAuth, function (req, res) {
-  const { organizerID, name, office, func, status } = req.body;
+  const { organizerID, name, identification, /* office, */ status } = req.body;
 
   Organizer.find({ _id: organizerID }).then((organizer) => {
     if (organizer.length == 1) {
       const query = { _id: organizer[0]._id };
       const newvalues = {
-        $set: { name, office, func, status },
+        $set: { name, identification, /* office, */ status },
       };
       Organizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {

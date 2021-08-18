@@ -17,14 +17,14 @@ const OrganizerSchema = new mongoose.Schema(
       //   message: "O nome do organizador já está sendo utilizado",
       // },
     },
-    office: {
+    identification: {
       type: String,
       required: true,
     },
-    func: {
-      type: String,
-      required: true,
-    },
+    // office: {
+    //   type: String,
+    //   required: true,
+    // },
     status: {
       type: String,
       enum: {

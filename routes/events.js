@@ -174,31 +174,46 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
           select: "lecturer_id type",
           populate: { path: "lecturer_id", select: "name office lattes" },
         },
+        {
+          path: "organizers",
+          select: "organizer_id office workload",
+          populate: { path: "organizer_id", select: "name identification" },
+        },
       ])
       .then((event) => {
         if (event) {
           if (event.dates && event.dates.length) {
             event.dates = event.dates.map(function (date) {
-              const x = date.toJSON();
-              x.date = toDateFormatted(date.start_date, true);
-              x.start_time = transformDateToTime(date.start_date);
-              x.end_time = transformDateToTime(date.end_date);
-              x.start_date = undefined;
-              x.end_date = undefined;
-              return x;
+              const dt = date.toJSON();
+              dt.date = toDateFormatted(date.start_date, true);
+              dt.start_time = transformDateToTime(date.start_date);
+              dt.end_time = transformDateToTime(date.end_date);
+              dt.start_date = undefined;
+              dt.end_date = undefined;
+              return dt;
             });
           }
           if (event.lecturers && event.lecturers.length) {
             event.lecturers = event.lecturers.map(function (lecturer) {
-              const x = lecturer.toJSON();
-              x.name = lecturer.lecturer_id.name;
-              x.office = lecturer.lecturer_id.office;
-              x.lattes = lecturer.lecturer_id.lattes;
-              x.guest = lecturer.type === "guest";
-              x.type = undefined;
-              x.lecturer_id = undefined;
-              x.event_id = undefined;
-              return x;
+              const lect = lecturer.toJSON();
+              lect.name = lecturer.lecturer_id.name;
+              lect.office = lecturer.lecturer_id.office;
+              lect.lattes = lecturer.lecturer_id.lattes;
+              lect.guest = lecturer.type === "guest";
+              lect.type = undefined;
+              lect.lecturer_id = undefined;
+              lect.event_id = undefined;
+              return lect;
+            });
+          }
+          if (event.organizers && event.organizers.length) {
+            event.organizers = event.organizers.map(function (organizer) {
+              const org = organizer.toJSON();
+              org.name = organizer.organizer_id.name;
+              org.identification = organizer.organizer_id.identification;
+              org.organizer_id = undefined;
+              org.event_id = undefined;
+              return org;
             });
           }
           return res.json(event);
