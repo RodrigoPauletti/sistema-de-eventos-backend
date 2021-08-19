@@ -28,6 +28,7 @@
     "mongoose-unique-validator": "^1.0.5",
     "mongoose-validator": "^1.3.2",
     "nodemailer": "^6.4.17",
+    "nodemon": "^2.0.12",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
     "path": "^0.12.7"
