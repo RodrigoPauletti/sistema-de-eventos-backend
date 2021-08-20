@@ -7,14 +7,23 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   Organizer.find({}, function (err, organizers) {
     if (err) {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
     organizers = organizers.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, organizers: organizers });
+    return res.json({ success: true, organizers: organizers });
+  });
+});
+
+router.post("/allActivated", reqAuth, function (req, res) {
+  Organizer.find({ status: "1" }, function (err, organizers) {
+    if (err) {
+      return res.json({ success: false });
+    }
+    return res.json(organizers);
   });
 });
 
@@ -42,7 +51,7 @@ router.post("/create", (req, res) => {
       return res.status(422).send(err);
     }
 
-    res.json({
+    return res.json({
       success: true,
       organizerID: organizer._id,
       msg: "Organizador criado com sucesso",
@@ -63,15 +72,15 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       Organizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+          return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });
