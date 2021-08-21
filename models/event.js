@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const EventDate = require("../models/eventDate");
 
 const EventSchema = new mongoose.Schema(
   {
@@ -123,6 +122,11 @@ EventSchema.virtual("lecturers", {
 });
 EventSchema.virtual("organizers", {
   ref: "EventOrganizer",
+  localField: "_id",
+  foreignField: "event_id",
+});
+EventSchema.virtual("expenses", {
+  ref: "EventExpense",
   localField: "_id",
   foreignField: "event_id",
 });

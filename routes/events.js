@@ -179,6 +179,11 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
           select: "organizer_id office workload",
           populate: { path: "organizer_id", select: "name identification" },
         },
+        {
+          path: "expenses",
+          select: "expense_id provider amount file comments",
+          populate: { path: "event_expense_type_id" },
+        },
       ])
       .then((event) => {
         if (event) {
