@@ -96,7 +96,14 @@ const EventSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: [0, 1],
+        values: [
+          "created",
+          "revision",
+          "correct",
+          "refused",
+          "approved",
+          "finished",
+        ],
         message: "Status inválido",
       },
       required: true,

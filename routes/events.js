@@ -106,8 +106,9 @@ router.post("/create", (req, res) => {
     resources,
     receipt_amount,
     total_amount,
-    status,
   } = req.body;
+
+  const status = "created";
 
   const query = {
     event_type_id,
@@ -149,6 +150,11 @@ router.post("/create", (req, res) => {
         });
       }
 
+      // TODO: Create event dates (from ID: event._id)
+      // TODO: Create event lecturers (from ID: event._id)
+      // TODO: Create event organizers (from ID: event._id)
+      // TODO: Create event expenses (from ID: event._id)
+
       return res.json({
         success: true,
         eventID: event._id,
@@ -185,45 +191,59 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
           populate: { path: "event_expense_type_id" },
         },
       ])
-      .then((event) => {
-        if (event) {
-          if (event.dates && event.dates.length) {
-            event.dates = event.dates.map(function (date) {
-              const dt = date.toJSON();
-              dt.date = toDateFormatted(date.start_date, true);
-              dt.start_time = transformDateToTime(date.start_date);
-              dt.end_time = transformDateToTime(date.end_date);
-              dt.start_date = undefined;
-              dt.end_date = undefined;
-              return dt;
-            });
+      .then(async (event) => {
+        const token = String(req.headers.authorization);
+        const session = await ActiveSession.find({ token: token });
+        const user_id = session[0].userId;
+
+        if (
+          event.user_id &&
+          event.user_id._id &&
+          event.user_id._id.toString() === user_id
+        ) {
+          if (event) {
+            if (event.dates && event.dates.length) {
+              event.dates = event.dates.map(function (date) {
+                const dt = date.toJSON();
+                dt.date = toDateFormatted(date.start_date, true);
+                dt.start_time = transformDateToTime(date.start_date);
+                dt.end_time = transformDateToTime(date.end_date);
+                dt.start_date = undefined;
+                dt.end_date = undefined;
+                return dt;
+              });
+            }
+            if (event.lecturers && event.lecturers.length) {
+              event.lecturers = event.lecturers.map(function (lecturer) {
+                const lect = lecturer.toJSON();
+                lect.name = lecturer.lecturer_id.name;
+                lect.office = lecturer.lecturer_id.office;
+                lect.lattes = lecturer.lecturer_id.lattes;
+                lect.guest = lecturer.type === "guest";
+                lect.type = undefined;
+                lect.lecturer_id = undefined;
+                lect.event_id = undefined;
+                return lect;
+              });
+            }
+            if (event.organizers && event.organizers.length) {
+              event.organizers = event.organizers.map(function (organizer) {
+                const org = organizer.toJSON();
+                org.name = organizer.organizer_id.name;
+                org.identification = organizer.organizer_id.identification;
+                org.organizer_id = undefined;
+                org.event_id = undefined;
+                return org;
+              });
+            }
+            return res.json(event);
           }
-          if (event.lecturers && event.lecturers.length) {
-            event.lecturers = event.lecturers.map(function (lecturer) {
-              const lect = lecturer.toJSON();
-              lect.name = lecturer.lecturer_id.name;
-              lect.office = lecturer.lecturer_id.office;
-              lect.lattes = lecturer.lecturer_id.lattes;
-              lect.guest = lecturer.type === "guest";
-              lect.type = undefined;
-              lect.lecturer_id = undefined;
-              lect.event_id = undefined;
-              return lect;
-            });
-          }
-          if (event.organizers && event.organizers.length) {
-            event.organizers = event.organizers.map(function (organizer) {
-              const org = organizer.toJSON();
-              org.name = organizer.organizer_id.name;
-              org.identification = organizer.organizer_id.identification;
-              org.organizer_id = undefined;
-              org.event_id = undefined;
-              return org;
-            });
-          }
-          return res.json(event);
+          return res.json({ success: false });
         }
-        return res.json({ success: false });
+        return res.status(500).json({
+          success: false,
+          msg: "Você não tem permissão para acessar esse evento.",
+        });
       });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
@@ -254,50 +274,81 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
     resources,
     receipt_amount,
     total_amount,
-    status,
   } = req.body;
 
   try {
     Event.find({ _id: eventID }).then((event) => {
       if (event.length === 1) {
-        const query = { _id: event[0]._id };
-        const newvalues = {
-          $set: {
-            event_type_id,
-            user_id,
-            name,
-            category_id,
-            category_second_field_value,
-            coverage_id,
-            coverage_second_field_value,
-            workload,
-            audience_estimate,
-            online,
-            link,
-            place,
-            ticket,
-            objective,
-            reason,
-            schedule,
-            details,
-            resources,
-            receipt_amount,
-            total_amount,
-            status,
-          },
-        };
-        Event.updateOne(query, newvalues, function (err, cb) {
-          if (err) {
-            return res.json({
-              success: false,
-              msg: "Ocorreu um erro. Favor contatar o administrador",
-            });
-          }
-          return res.json({ success: true });
-        });
-      } else {
-        return res.json({ success: false });
+        const token = String(req.headers.authorization);
+        const session = await ActiveSession.find({ token: token });
+        const user_id = session[0].userId;
+
+        if (
+          event.user_id &&
+          event.user_id._id &&
+          event.user_id._id.toString() === user_id
+          // OU USUÁRIO ATUAL É ADM/CENTRAL/ETC...
+        ) {
+          const oldStatus = event.status;
+
+          // case "created": // Criado
+          // case "revision": // Em revisão
+          // case "correct": // Corrigir
+          // case "refused": // Recusado
+          // case "approved": // Aprovado
+          // case "finished": // Finalizado
+
+          const newStatus =
+            oldStatus === "created" || oldStatus === "correct"
+              ? "revision"
+              : oldStatus;
+
+          const query = { _id: event[0]._id };
+          const newvalues = {
+            $set: {
+              event_type_id,
+              name,
+              category_id,
+              category_second_field_value,
+              coverage_id,
+              coverage_second_field_value,
+              workload,
+              audience_estimate,
+              online,
+              link,
+              place,
+              ticket,
+              objective,
+              reason,
+              schedule,
+              details,
+              resources,
+              receipt_amount,
+              total_amount,
+              status: newStatus,
+            },
+          };
+          Event.updateOne(query, newvalues, function (err, cb) {
+            if (err) {
+              return res.json({
+                success: false,
+                msg: "Ocorreu um erro. Favor contatar o administrador",
+              });
+            }
+            // TODO: Update event dates
+            // TODO: Update event lecturers
+            // TODO: Update event organizers
+            // TODO: Update event expenses
+            return res.json({ success: true });
+          });
+        } else {
+          return res.status(500).json({
+            success: false,
+            msg: "Você não tem permissão para alterar esse evento.",
+          });
+        }
       }
+      return res.json({ success: false });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
