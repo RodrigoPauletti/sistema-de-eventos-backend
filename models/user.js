@@ -23,7 +23,6 @@ const UserSchema = new mongoose.Schema(
     user_type_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserType",
-      default: "60a7126b48bcd0d3214fd2a3",
       required: true,
     },
     name: {

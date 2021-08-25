@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventDate.find({}, function (err, eventsDates) {
     if (err) {
-      res.json({ success: false });
+     return res.json({ success: false });
     }
     eventsDates = eventsDates.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventsDates: eventsDates });
+   return res.json({ success: true, eventsDates: eventsDates });
   });
 });
 
@@ -42,7 +42,7 @@ router.post("/create", (req, res) => {
       return res.status(422).send(err);
     }
 
-    res.json({
+   return res.json({
       success: true,
       eventDateID: eventDate._id,
       msg: "Data do evento criada com sucesso",
@@ -55,9 +55,9 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
 
   EventDate.findOne({ event_id: eventID }).then((eventDate) => {
     if (eventDate) {
-      res.json({ success: true, eventDate });
+     return res.json({ success: true, eventDate });
     } else {
-      res.json({ success: false });
+     return res.json({ success: false });
     }
   });
 });
@@ -73,15 +73,15 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventDate.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+         return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+       return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+     return res.json({ success: false });
     }
   });
 });

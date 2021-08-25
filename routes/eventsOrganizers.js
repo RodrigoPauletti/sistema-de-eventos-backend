@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventOrganizer.find({}, function (err, eventsOrganizers) {
     if (err) {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
     eventsOrganizers = eventsOrganizers.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, eventsOrganizers: eventsOrganizers });
+    return res.json({ success: true, eventsOrganizers: eventsOrganizers });
   });
 });
 
@@ -43,7 +43,7 @@ router.post("/create", (req, res) => {
       return res.status(422).send(err);
     }
 
-    res.json({
+    return res.json({
       success: true,
       organizerID: eventOrganizer._id,
       msg: "Organizador do evento criado com sucesso",
@@ -64,15 +64,15 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventOrganizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+          return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });

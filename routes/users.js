@@ -40,7 +40,7 @@ router.post("/all", reqAuth, async function (req, res) {
       x.__v = undefined;
       return x;
     });
-    res.json({ success: true, users });
+    return res.json({ success: true, users });
   } catch (err) {
     res.status(500).json({ success: false, msg: err });
   }
@@ -55,15 +55,15 @@ router.post("/edit", reqAuth, function (req, res) {
       const newvalues = { $set: { name, email } };
       User.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          res.json({
+          return res.json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });
@@ -72,9 +72,9 @@ router.post("/check/resetpass/:id", (req, res) => {
   const userID = req.params.id;
   User.find({ _id: userID }).then((user) => {
     if (user.length == 1 && user[0].resetPass == true) {
-      res.json({ success: true }); // reset password was made for this user
+      return res.json({ success: true }); // reset password was made for this user
     } else {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
   });
 });
@@ -89,7 +89,7 @@ router.post("/resetpass/:id", (req, res) => {
     errors.push({ msg: "A senha deve conter, no mínimo, 6 caracteres" });
   }
   if (errors.length > 0) {
-    res.json({ success: false, msg: errors });
+    return res.json({ success: false, msg: errors });
   } else {
     const query = { _id: userID };
     bcrypt.genSalt(10, (err, salt) => {
@@ -99,9 +99,9 @@ router.post("/resetpass/:id", (req, res) => {
         const newvalues = { $set: { resetPass: false, password: password } };
         User.updateOne(query, newvalues, function (err, usr) {
           if (err) {
-            res.json({ success: false, msg: err });
+            return res.json({ success: false, msg: err });
           }
-          res.json({ success: true });
+          return res.json({ success: true });
         });
       });
     });
@@ -120,7 +120,7 @@ router.post("/forgotpassword", (req, res) => {
       errors.push({ msg: "E-mail não existe" });
     }
     if (errors.length > 0) {
-      res.json({ success: false, errors: errors });
+      return res.json({ success: false, errors: errors });
     } else {
       // create reusable transporter object using the default SMTP transport
       const transporter = nodemailer.createTransport(smtpConf);
@@ -149,9 +149,9 @@ router.post("/forgotpassword", (req, res) => {
             smtpConf.auth.user +
             "</a></p>", // html body
         });
-        res.json({ success: true });
+        return res.json({ success: true });
       }
-      res.json({ success: true, userID: user[0]._id });
+      return res.json({ success: true, userID: user[0]._id });
     }
   });
 });
@@ -161,9 +161,9 @@ router.post("/register", (req, res) => {
 
   User.findOne({ email }).then((user) => {
     if (user) {
-      res.json({ success: false, msg: "E-mail já existente" });
+      return res.json({ success: false, msg: "E-mail já existente" });
     } else if (password.length < 6) {
-      res.json({
+      return res.json({
         success: false,
         msg: "A senha deve conter, no mínimo, 6 caracteres",
       });
@@ -197,12 +197,12 @@ router.post("/register", (req, res) => {
                   smtpConf.auth.user +
                   "</a></p>", // html body
               });
-              res.json({
+              return res.json({
                 success: true,
                 msg: "Usuário criado com sucesso",
               });
             }
-            res.json({
+            return res.json({
               success: true,
               userID: user._id,
               msg: "Usuário criado com sucesso",
@@ -222,9 +222,9 @@ router.post("/confirm/:id", (req, res) => {
   const newvalues = { $set: { accountConfirmation: true } };
   User.updateOne(query, newvalues, function (err, usr) {
     if (err) {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
-    res.json({ success: true });
+    return res.json({ success: true });
   });
 });
 
@@ -267,16 +267,16 @@ router.post("/login", (req, res) => {
 });
 
 router.post("/checkSession", reqAuth, function (req, res) {
-  res.json({ success: true });
+  return res.json({ success: true });
 });
 
 router.post("/logout", reqAuth, function (req, res) {
   const token = req.body.token;
-  ActiveSession.deleteMany({ token: token }, function (err, item) {
+  ActiveSession.deleteMany({ token }, function (err, item) {
     if (err) {
-      res.json({ success: false });
+      return res.json({ success: false });
     }
-    res.json({ success: true });
+    return res.json({ success: true });
   });
 });
 

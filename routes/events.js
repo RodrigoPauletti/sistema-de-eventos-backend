@@ -4,16 +4,34 @@ const Event = require("../models/event");
 const reqAuth = require("../config/safeRoutes").reqAuth;
 const ActiveSession = require("../models/activeSession");
 const faker = require("faker");
+const User = require("../models/user");
 
 // route /admin/events/
 router.post("/all", reqAuth, async function (req, res) {
   try {
-    // const token = String(req.headers.authorization);
-    // const session = await ActiveSession.find({ token: token });
+    const token = String(req.headers.authorization);
+    const session = await ActiveSession.find({ token });
+    const user_id = session[0].userId;
+    const userLogged = await User.findById(user_id)
+      .populate("user_type_id", "permission")
+      .select("name");
     let filter = {};
-    // if(user){ /* TODO: Se usuário não for Admin ou outro cargo, deve mostrar apenas eventos relacionados à eles */
-    //   filter = { user_id: session[0].userId };
-    // }
+    if (!userLogged) {
+      return res.json({
+        success: false,
+        msg: "Responsável do evento não encontrado.",
+      });
+    }
+    if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+      return res.json({
+        success: false,
+        msg: "Tipo ou permissão do usuário não informado.",
+      });
+    }
+    // Se usuário for "Proponente", deve mostrar apenas eventos relacionados à eles
+    if (userLogged.user_type_id.permission === "1") {
+      filter = { user_id };
+    }
     return Event.find(filter)
       .populate([
         {
@@ -167,10 +185,29 @@ router.post("/create", (req, res) => {
   }
 });
 
-router.post("/get/:eventID", reqAuth, function (req, res) {
+router.post("/get/:eventID", reqAuth, async function (req, res) {
   const { eventID } = req.params;
 
   try {
+    const token = String(req.headers.authorization);
+    const session = await ActiveSession.find({ token });
+    const user_id = session[0].userId;
+    const userLogged = await User.findById(user_id)
+      .populate("user_type_id", "permission")
+      .select("name");
+    if (!userLogged) {
+      return res.json({
+        success: false,
+        msg: "Responsável do evento não encontrado.",
+      });
+    }
+    if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+      return res.json({
+        success: false,
+        msg: "Tipo ou permissão do usuário não informado.",
+      });
+    }
+
     return Event.findOne({ _id: eventID })
       .populate([
         { path: "user_id", select: "name" },
@@ -192,9 +229,16 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
         },
       ])
       .then(async (event) => {
-        const token = String(req.headers.authorization);
-        const session = await ActiveSession.find({ token: token });
-        const user_id = session[0].userId;
+        // Usuário é "Proponente" e o evento não está disponível para ele
+        if (
+          userLogged.user_type_id.permission === "1" &&
+          ["created", "correct", "finished"].indexOf(event.status) === -1
+        ) {
+          return res.json({
+            success: false,
+            msg: "Você não tem permissão para acessar esse evento.",
+          });
+        }
 
         if (
           event.user_id &&
@@ -255,7 +299,6 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
 
   const {
     event_type_id,
-    user_id,
     name,
     category_id,
     category_second_field_value,
@@ -277,7 +320,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
   } = req.body;
 
   try {
-    Event.find({ _id: eventID }).then((event) => {
+    Event.find({ _id: eventID }).then(async (event) => {
       if (event.length === 1) {
         const token = String(req.headers.authorization);
         const session = await ActiveSession.find({ token: token });
@@ -287,7 +330,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           event.user_id &&
           event.user_id._id &&
           event.user_id._id.toString() === user_id
-          // OU USUÁRIO ATUAL É ADM/CENTRAL/ETC...
+          // TODO: ou usuário atual é adm/central/etc...
         ) {
           const oldStatus = event.status;
 
