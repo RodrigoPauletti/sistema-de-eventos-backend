@@ -7,7 +7,7 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventType.find({}, function (err, eventsTypes) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsTypes = eventsTypes.map(function (item) {
       const x = item;
@@ -21,7 +21,7 @@ router.post("/all", reqAuth, function (req, res) {
 router.post("/allActivated", reqAuth, function (req, res) {
   EventType.find({ status: "1" }, function (err, eventsTypes) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     return res.json(eventsTypes);
   });
@@ -36,19 +36,19 @@ router.post("/create", (req, res) => {
       if (err.name === "MongoError" && err.code === 11000) {
         // Duplicate name
         return res
-          .status(422)
+          .status(500)
           .send({ success: false, message: "O tipo de evento já existe!" });
       }
 
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
-        return res.status(422).json({
+        return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
         });
       }
 
-      return res.status(422).send(err);
+      return res.status(500).send(err);
     }
 
     return res.json({
@@ -72,7 +72,7 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -80,7 +80,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

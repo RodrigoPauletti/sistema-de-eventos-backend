@@ -7,7 +7,7 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventCoverage.find({}, function (err, eventsCoverages) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsCoverages = eventsCoverages.map(function (item) {
       const x = item;
@@ -21,7 +21,7 @@ router.post("/all", reqAuth, function (req, res) {
 router.post("/allActivated", reqAuth, function (req, res) {
   EventCoverage.find({ status: "1" }, function (err, eventsCoverages) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     return res.json(eventsCoverages);
   });
@@ -73,7 +73,7 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventCoverage.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -81,7 +81,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

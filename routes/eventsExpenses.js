@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventExpense.find({}, function (err, eventsExpenses) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsExpenses = eventsExpenses.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    return res.json({ success: true, eventsExpenses: eventsExpenses });
+    return res.json({ success: true, eventsExpenses });
   });
 });
 
@@ -27,7 +27,7 @@ router.post("/create", (req, res) => {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
         // Duplicate name
-        return res.status(422).send({
+        return res.status(500).send({
           success: false,
           message: "A despesa de evento já existe!",
         });
@@ -35,13 +35,13 @@ router.post("/create", (req, res) => {
 
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
-        return res.status(422).json({
+        return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
         });
       }
 
-      return res.status(422).send(err);
+      return res.status(500).send(err);
     }
 
     return res.json({
@@ -72,7 +72,7 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventExpense.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -80,7 +80,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

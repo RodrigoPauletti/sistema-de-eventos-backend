@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventOrganizer.find({}, function (err, eventsOrganizers) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsOrganizers = eventsOrganizers.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    return res.json({ success: true, eventsOrganizers: eventsOrganizers });
+    return res.json({ success: true, eventsOrganizers });
   });
 });
 
@@ -26,7 +26,7 @@ router.post("/create", (req, res) => {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
         // TODO: Validate same organizer twice or more in the same event
-        return res.status(422).send({
+        return res.status(500).send({
           success: false,
           message: "O organizador do evento já existe!",
         });
@@ -34,13 +34,13 @@ router.post("/create", (req, res) => {
 
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
-        return res.status(422).json({
+        return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
         });
       }
 
-      return res.status(422).send(err);
+      return res.status(500).send(err);
     }
 
     return res.json({
@@ -64,7 +64,7 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventOrganizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -72,7 +72,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventDate.find({}, function (err, eventsDates) {
     if (err) {
-     return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsDates = eventsDates.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-   return res.json({ success: true, eventsDates: eventsDates });
+    return res.json({ success: true, eventsDates });
   });
 });
 
@@ -27,22 +27,22 @@ router.post("/create", (req, res) => {
       if (err.name === "MongoError" && err.code === 11000) {
         // Duplicate name
         return res
-          .status(422)
+          .status(500)
           .send({ success: false, message: "A data do evento já existe!" });
       }
 
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
-        return res.status(422).json({
+        return res.status(500).json({
           success: false,
           msg: err.errors[firstErrorKey].message,
         });
       }
 
-      return res.status(422).send(err);
+      return res.status(500).send(err);
     }
 
-   return res.json({
+    return res.json({
       success: true,
       eventDateID: eventDate._id,
       msg: "Data do evento criada com sucesso",
@@ -55,9 +55,9 @@ router.post("/get/:eventID", reqAuth, function (req, res) {
 
   EventDate.findOne({ event_id: eventID }).then((eventDate) => {
     if (eventDate) {
-     return res.json({ success: true, eventDate });
+      return res.json({ success: true, eventDate });
     } else {
-     return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });
@@ -73,15 +73,15 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventDate.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-         return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-       return res.json({ success: true });
+        return res.json({ success: true });
       });
     } else {
-     return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

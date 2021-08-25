@@ -17,13 +17,13 @@ router.post("/all", reqAuth, async function (req, res) {
       .select("name");
     let filter = {};
     if (!userLogged) {
-      return res.json({
+      return res.status(500).json({
         success: false,
         msg: "Responsável do evento não encontrado.",
       });
     }
     if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
-      return res.json({
+      return res.status(500).json({
         success: false,
         msg: "Tipo ou permissão do usuário não informado.",
       });
@@ -55,7 +55,7 @@ router.post("/all", reqAuth, async function (req, res) {
       ])
       .exec((err, events) => {
         if (err) {
-          return res.json({ success: false, msg: err });
+          return res.status(500).json({ success: false, msg: err });
         }
         events = events.map(function (item) {
           const x = item.toJSON();
@@ -196,13 +196,13 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
       .populate("user_type_id", "permission")
       .select("name");
     if (!userLogged) {
-      return res.json({
+      return res.status(500).json({
         success: false,
         msg: "Responsável do evento não encontrado.",
       });
     }
     if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
-      return res.json({
+      return res.status(500).json({
         success: false,
         msg: "Tipo ou permissão do usuário não informado.",
       });
@@ -234,7 +234,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
           userLogged.user_type_id.permission === "1" &&
           ["created", "correct", "finished"].indexOf(event.status) === -1
         ) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Você não tem permissão para acessar esse evento.",
           });
@@ -282,7 +282,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             }
             return res.json(event);
           }
-          return res.json({ success: false });
+          return res.status(500).json({ success: false });
         }
         return res.status(500).json({
           success: false,
@@ -373,7 +373,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           };
           Event.updateOne(query, newvalues, function (err, cb) {
             if (err) {
-              return res.json({
+              return res.status(500).json({
                 success: false,
                 msg: "Ocorreu um erro. Favor contatar o administrador",
               });
@@ -391,7 +391,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           });
         }
       }
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });

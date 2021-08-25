@@ -7,14 +7,14 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   UserType.find({}, function (err, usersTypes) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     usersTypes = usersTypes.map(function (item) {
       const x = item;
       x.__v = undefined;
       return x;
     });
-    return res.json({ success: true, usersTypes: usersTypes });
+    return res.json({ success: true, usersTypes });
   });
 });
 
@@ -56,7 +56,7 @@ router.post("/edit", reqAuth, function (req, res) {
       const newvalues = { $set: { name, permission, status } };
       UserType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -64,7 +64,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });

@@ -24,6 +24,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const config = require("../config/keys");
 const User = require("../models/user");
+const UserType = require("../models/userType");
 const ActiveSession = require("../models/activeSession");
 const reqAuth = require("../config/safeRoutes").reqAuth;
 const { smtpConf } = require("../config/config");
@@ -55,7 +56,7 @@ router.post("/edit", reqAuth, function (req, res) {
       const newvalues = { $set: { name, email } };
       User.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -63,7 +64,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });
@@ -74,7 +75,7 @@ router.post("/check/resetpass/:id", (req, res) => {
     if (user.length == 1 && user[0].resetPass == true) {
       return res.json({ success: true }); // reset password was made for this user
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });
@@ -89,7 +90,7 @@ router.post("/resetpass/:id", (req, res) => {
     errors.push({ msg: "A senha deve conter, no mínimo, 6 caracteres" });
   }
   if (errors.length > 0) {
-    return res.json({ success: false, msg: errors });
+    return res.status(500).json({ success: false, msg: errors });
   } else {
     const query = { _id: userID };
     bcrypt.genSalt(10, (err, salt) => {
@@ -99,7 +100,7 @@ router.post("/resetpass/:id", (req, res) => {
         const newvalues = { $set: { resetPass: false, password: password } };
         User.updateOne(query, newvalues, function (err, usr) {
           if (err) {
-            return res.json({ success: false, msg: err });
+            return res.status(500).json({ success: false, msg: err });
           }
           return res.json({ success: true });
         });
@@ -120,7 +121,7 @@ router.post("/forgotpassword", (req, res) => {
       errors.push({ msg: "E-mail não existe" });
     }
     if (errors.length > 0) {
-      return res.json({ success: false, errors: errors });
+      return res.status(500).json({ success: false, errors: errors });
     } else {
       // create reusable transporter object using the default SMTP transport
       const transporter = nodemailer.createTransport(smtpConf);
@@ -156,14 +157,25 @@ router.post("/forgotpassword", (req, res) => {
   });
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
+
+  const user_type = await UserType.findOne({ permission: "1" }); // Get user type who have permission "1" (proponent)
+  const user_type_id = user_type._id;
+  if (!user_type_id) {
+    return res.status(500).json({
+      success: false,
+      msg: "Tipo do usuário não encontrado",
+    });
+  }
 
   User.findOne({ email }).then((user) => {
     if (user) {
-      return res.json({ success: false, msg: "E-mail já existente" });
+      return res
+        .status(500)
+        .json({ success: false, msg: "E-mail já existente" });
     } else if (password.length < 6) {
-      return res.json({
+      return res.status(500).json({
         success: false,
         msg: "A senha deve conter, no mínimo, 6 caracteres",
       });
@@ -171,7 +183,7 @@ router.post("/register", (req, res) => {
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, null, (err, hash) => {
           if (err) throw err;
-          const query = { name, email, password: hash };
+          const query = { user_type_id, name, email, password: hash };
           User.create(query, function (err, user) {
             if (err) throw err;
 
@@ -222,7 +234,7 @@ router.post("/confirm/:id", (req, res) => {
   const newvalues = { $set: { accountConfirmation: true } };
   User.updateOne(query, newvalues, function (err, usr) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     return res.json({ success: true });
   });
@@ -236,11 +248,15 @@ router.post("/login", (req, res) => {
     if (err) throw err;
 
     if (!user) {
-      return res.json({ success: false, msg: "Credenciais incorretas" });
+      return res
+        .status(500)
+        .json({ success: false, msg: "Credenciais incorretas" });
     }
 
     if (!user.accountConfirmation) {
-      return res.json({ success: false, msg: "Usuário não confirmado" });
+      return res
+        .status(500)
+        .json({ success: false, msg: "Usuário não confirmado" });
     }
 
     bcrypt.compare(password, user.password, function (err, isMatch) {
@@ -260,7 +276,9 @@ router.post("/login", (req, res) => {
           });
         });
       } else {
-        return res.json({ success: false, msg: "Credenciais incorretas" });
+        return res
+          .status(500)
+          .json({ success: false, msg: "Credenciais incorretas" });
       }
     });
   });
@@ -274,7 +292,7 @@ router.post("/logout", reqAuth, function (req, res) {
   const token = req.body.token;
   ActiveSession.deleteMany({ token }, function (err, item) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     return res.json({ success: true });
   });

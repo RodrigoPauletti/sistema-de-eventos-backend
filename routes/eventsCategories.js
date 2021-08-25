@@ -7,7 +7,7 @@ const reqAuth = require("../config/safeRoutes").reqAuth;
 router.post("/all", reqAuth, function (req, res) {
   EventCategory.find({}, function (err, eventsCategories) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     eventsCategories = eventsCategories.map(function (item) {
       const x = item;
@@ -21,7 +21,7 @@ router.post("/all", reqAuth, function (req, res) {
 router.post("/allActivated", reqAuth, function (req, res) {
   EventCategory.find({ status: "1" }, function (err, eventsCategories) {
     if (err) {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
     return res.json(eventsCategories);
   });
@@ -73,7 +73,7 @@ router.post("/edit", reqAuth, function (req, res) {
       };
       EventCategory.updateOne(query, newvalues, function (err, cb) {
         if (err) {
-          return res.json({
+          return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
@@ -81,7 +81,7 @@ router.post("/edit", reqAuth, function (req, res) {
         return res.json({ success: true });
       });
     } else {
-      return res.json({ success: false });
+      return res.status(500).json({ success: false });
     }
   });
 });
