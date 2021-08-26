@@ -1,10 +1,15 @@
 const express = require("express");
 const router = express.Router();
+
 const Event = require("../models/event");
-const reqAuth = require("../config/safeRoutes").reqAuth;
-const ActiveSession = require("../models/activeSession");
-const faker = require("faker");
+const EventType = require("../models/eventType");
+const EventCategory = require("../models/eventCategory");
+const EventCoverage = require("../models/eventCoverage");
 const User = require("../models/user");
+const ActiveSession = require("../models/activeSession");
+
+const reqAuth = require("../config/safeRoutes").reqAuth;
+const faker = require("faker");
 
 // route /admin/events/
 router.post("/all", reqAuth, async function (req, res) {
@@ -28,10 +33,25 @@ router.post("/all", reqAuth, async function (req, res) {
         msg: "Tipo ou permissão do usuário não encontrado",
       });
     }
-    // Se usuário for "Proponente", deve mostrar apenas eventos relacionados à eles
+
+    let adminChanging = false;
     if (userLogged.user_type_id.permission === "1") {
+      // Se usuário for "Proponente", deve mostrar apenas eventos relacionados à eles
       filter = { user_id };
+    } else if (
+      ["2", "3", "5"].indexOf(userLogged.user_type_id.permission) !== -1
+    ) {
+      // Senão, mostrar todos os eventos (do usuário & entre os status: "Revisão", "Recusado", "Aprovado", "Finalizado")
+      adminChanging = true;
+      filter = {
+        $or: [
+          { user_id },
+          { status: { $in: ["revision", "refused", "approved", "finished"] } },
+          // TODO: Verificar se serão esses status
+        ],
+      };
     }
+
     return Event.find(filter)
       .populate([
         {
@@ -58,9 +78,12 @@ router.post("/all", reqAuth, async function (req, res) {
           return res.status(500).json({ success: false, msg: err });
         }
         events = events.map(function (item) {
-          const x = item.toJSON();
-          x.__v = undefined;
-          x.date = "";
+          const ev = item.toJSON();
+          ev.__v = undefined;
+          ev.date = "";
+          ev.disabled =
+            ["created", "correct", "finished"].indexOf(ev.status) !== -1 &&
+            !adminChanging;
           if (item.dates && item.dates.length) {
             if (item.dates.length === 1) {
               // Event has just one date
@@ -70,9 +93,9 @@ router.post("/all", reqAuth, async function (req, res) {
                 endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate)
               ) {
                 // If end_date is bigger then and another day of start_date
-                x.date = `${startDate} até ${endDate}`;
+                ev.date = `${startDate} até ${endDate}`;
               } else {
-                x.date = startDate;
+                ev.date = startDate;
               }
             } else {
               // Event has more than one date
@@ -86,14 +109,14 @@ router.post("/all", reqAuth, async function (req, res) {
                 endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate)
               ) {
                 // If end_date is bigger then and another day of start_date
-                x.date = `${startDate} até ${endDate}`;
+                ev.date = `${startDate} até ${endDate}`;
               } else {
-                x.date = startDate;
+                ev.date = startDate;
               }
             }
           }
-          x.dates = undefined;
-          return x;
+          ev.dates = undefined;
+          return ev;
         });
         return res.json(events);
       });
@@ -102,7 +125,7 @@ router.post("/all", reqAuth, async function (req, res) {
   }
 });
 
-router.post("/create", (req, res) => {
+router.post("/create", async (req, res) => {
   const {
     event_type_id,
     user_id,
@@ -127,65 +150,79 @@ router.post("/create", (req, res) => {
     send_to_review,
   } = req.body;
 
-  const status = "created";
-  console.log("send_to_review", send_to_review || false);
+  const query = {
+    event_type_id,
+    user_id,
+    name,
+    category_id,
+    category_second_field_value,
+    coverage_id,
+    coverage_second_field_value,
+    workload,
+    audience_estimate,
+    online,
+    link,
+    place,
+    ticket,
+    objective,
+    reason,
+    schedule,
+    details,
+    resources,
+    receipt_amount,
+    total_amount,
+    status: send_to_review ? "revision" : "created", // Se é alteração do status, é alterado para "Em revisão"
+  };
 
-  // const query = {
-  //   event_type_id,
-  //   user_id,
-  //   name,
-  //   category_id,
-  //   category_second_field_value,
-  //   coverage_id,
-  //   coverage_second_field_value,
-  //   workload,
-  //   audience_estimate,
-  //   online,
-  //   link,
-  //   place,
-  //   ticket,
-  //   objective,
-  //   reason,
-  //   schedule,
-  //   details,
-  //   resources,
-  //   receipt_amount,
-  //   total_amount,
-  //   status,
-  //   send_to_review,
-  // };
+  try {
+    const validation = await validateEventNameUserTypeCategoryAndCoverage({
+      event_name: name,
+      event_id: null,
+      user_id,
+      event_type_id,
+      category_id,
+      coverage_id,
+    });
 
-  // try {
-  //   Event.create(query, function (err, event) {
-  //     if (err) {
-  //       const firstErrorKey = Object.keys(err.errors).shift();
-  //       if (firstErrorKey) {
-  //         return res.status(500).json({
-  //           success: false,
-  //           msg: err.errors[firstErrorKey].message,
-  //         });
-  //       }
-  //       return res.status(500).json({
-  //         success: false,
-  //         msg: err,
-  //       });
-  //     }
+    if (!validation.success) {
+      return res.status(500).json({
+        success: false,
+        msg:
+          validation.msg ||
+          "Erro ao criar o evento. Entre em contato com o administrador do sistema.",
+      });
+    }
 
-  //     // TODO: Create event dates (from ID: event._id)
-  //     // TODO: Create event lecturers (from ID: event._id)
-  //     // TODO: Create event organizers (from ID: event._id)
-  //     // TODO: Create event expenses (from ID: event._id)
+    Event.create(query, function (err, event) {
+      if (err) {
+        const firstErrorKey = Object.keys(err.errors).shift();
+        if (firstErrorKey) {
+          return res.status(500).json({
+            success: false,
+            msg: err.errors[firstErrorKey].message,
+          });
+        }
+        return res.status(500).json({
+          success: false,
+          msg: err,
+        });
+      }
 
-  //     return res.json({
-  //       success: true,
-  //       eventID: event._id,
-  //       msg: "Evento criado com sucesso",
-  //     });
-  //   });
-  //   // return res.status(500).json({ success: false });
-  // } catch (err) {
-  //   return res.status(500).json({ success: false, msg: err });
-  // }
+      // TODO: Create event dates (from ID: event._id)
+      // TODO: Create event lecturers (from ID: event._id)
+      // TODO: Create event organizers (from ID: event._id)
+      // TODO: Create event expenses (from ID: event._id)
+
+      return res.json({
+        success: true,
+        eventID: event._id,
+        msg: "Evento criado com sucesso",
+      });
+    });
+    // return res.status(500).json({ success: false });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: err });
+  }
 });
 
 router.post("/get/:eventID", reqAuth, async function (req, res) {
@@ -333,88 +370,117 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
     send_to_review,
   } = req.body;
 
-  // send_to_review =
-
   try {
-    Event.find({ _id: eventID }).then(async (event) => {
-      if (event.length === 1) {
-        const token = String(req.headers.authorization);
-        const session = await ActiveSession.find({ token: token });
-        const user_id = session[0].userId;
-        const userLogged = await User.findById(user_id)
-          .populate("user_type_id", "permission")
-          .select("name");
-        if (!userLogged) {
-          return res.status(500).json({
-            success: false,
-            msg: "Erro ao buscar o usuário logado",
-          });
-        }
-        if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
-          return res.status(500).json({
-            success: false,
-            msg: "Tipo ou permissão do usuário não encontrado",
-          });
-        }
-        // Usuário é "Proponente" e o evento não está disponível para ele alterar
-        if (
-          userLogged.user_type_id.permission === "1" &&
-          ["created", "correct", "finished"].indexOf(event.status) === -1
-        ) {
-          return res.status(500).json({
-            success: false,
-            msg: "Você não tem permissão para alterar esse evento",
-          });
-        }
-        const oldStatus = event.status;
-
-        const newStatus =
-          oldStatus === "created" || oldStatus === "correct"
-            ? "revision"
-            : oldStatus;
-
-        const query = { _id: event[0]._id };
-        const newvalues = {
-          $set: {
-            event_type_id,
-            name,
-            category_id,
-            category_second_field_value,
-            coverage_id,
-            coverage_second_field_value,
-            workload,
-            audience_estimate,
-            online,
-            link,
-            place,
-            ticket,
-            objective,
-            reason,
-            schedule,
-            details,
-            resources,
-            receipt_amount,
-            total_amount,
-            status: newStatus,
-          },
-        };
-        Event.updateOne(query, newvalues, function (err, cb) {
-          if (err) {
-            return res.status(500).json({
-              success: false,
-              msg: "Ocorreu um erro. Favor contatar o administrador",
-            });
-          }
-          // TODO: Update event dates
-          // TODO: Update event lecturers
-          // TODO: Update event organizers
-          // TODO: Update event expenses
-          return res.json({ success: true });
+    Event.findById(eventID).then(async (event) => {
+      if (!event) {
+        return res
+          .status(500)
+          .json({ success: false, msg: "Evento não encontrado" });
+      }
+      const token = String(req.headers.authorization);
+      const session = await ActiveSession.find({ token: token });
+      const user_id = session[0].userId;
+      const userLogged = await User.findById(user_id)
+        .populate("user_type_id", "permission")
+        .select("name");
+      if (!userLogged) {
+        return res.status(500).json({
+          success: false,
+          msg: "Erro ao buscar o usuário logado",
         });
       }
-      return res
-        .status(500)
-        .json({ success: false, msg: "Evento não encontrado" });
+      if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+        return res.status(500).json({
+          success: false,
+          msg: "Tipo ou permissão do usuário não encontrado",
+        });
+      }
+      // Usuário é "Proponente" e o evento não está disponível para ele alterar
+      if (
+        userLogged.user_type_id.permission === "1" &&
+        ["created", "correct", "finished"].indexOf(event.status) === -1
+      ) {
+        return res.status(500).json({
+          success: false,
+          msg: "Você não tem permissão para alterar esse evento",
+        });
+      }
+
+      const validation = await validateEventNameUserTypeCategoryAndCoverage({
+        event_name: name,
+        event_id: eventID,
+        user_id,
+        event_type_id,
+        category_id,
+        coverage_id,
+      });
+
+      if (!validation.success) {
+        return res.status(500).json({
+          success: false,
+          msg:
+            validation.msg ||
+            "Erro ao criar o evento. Entre em contato com o administrador do sistema.",
+        });
+      }
+
+      let adminChanging = false;
+      if (
+        event.user_id !== user_id &&
+        ["2", "3", "5"].indexOf(userLogged.user_type_id.permission) !== -1
+      ) {
+        // Verifica se o usuário que está alterando é o mesmo que criou o evento & o usuário que está alterando tem permissão de admin ("2", "3", "5")
+        adminChanging = true;
+      }
+      const oldStatus = event.status;
+      const newStatus = send_to_review // Se é alteração do status
+        ? ["created", "correct"].indexOf(oldStatus) !== -1 // Se o status antigo é "Criado"/"Corrigir", é alterado para "Em revisão"
+          ? "revision"
+          : oldStatus === "revision" && adminChanging // Se o status antigo é "Em revisão" e o usuário que está alterando é um admin ("2", "3", "5"), é alterado para "Corrigir"
+          ? "correct"
+          : oldStatus
+        : oldStatus;
+
+      // TODO: Detectar alteração de status "Reprovado", "Aprovado" e "Finalizado"
+
+      const query = { _id: event._id };
+      const newvalues = {
+        $set: {
+          event_type_id,
+          name,
+          category_id,
+          category_second_field_value,
+          coverage_id,
+          coverage_second_field_value,
+          workload,
+          audience_estimate,
+          online,
+          link,
+          place,
+          ticket,
+          objective,
+          reason,
+          schedule,
+          details,
+          resources,
+          receipt_amount,
+          total_amount,
+          status: newStatus,
+        },
+      };
+      Event.updateOne(query, newvalues, function (err, cb) {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            msg: "Ocorreu um erro. Favor contatar o administrador",
+          });
+        }
+        // TODO: Update event dates
+        // TODO: Update event lecturers
+        // TODO: Update event organizers
+        // TODO: Update event expenses
+        return res.json({ success: true });
+      });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
@@ -518,4 +584,55 @@ function endDateIsBiggerAndAnotherDayFromStartDate(startDate, endDate) {
     new Date(endDate).getTime() > new Date(startDate).getTime() &&
     new Date(endDate).getDay() !== new Date(startDate).getDay()
   );
+}
+
+async function validateEventNameUserTypeCategoryAndCoverage({
+  event_name,
+  event_id,
+  user_id,
+  event_type_id,
+  category_id,
+  coverage_id,
+}) {
+  const eventAlreadyExists = await Event.findOne({ name: event_name });
+  if (
+    eventAlreadyExists &&
+    eventAlreadyExists._id.toString() !== event_id.toString()
+  ) {
+    return {
+      success: false,
+      msg: "Evento já existente. Tente informar outro nome.",
+    };
+  }
+  const userExists = await User.findById(user_id);
+  if (!userExists) {
+    return {
+      success: false,
+      msg: "Usuário não encontrado",
+    };
+  }
+  const eventTypeExists = await EventType.findById(event_type_id);
+  if (!eventTypeExists) {
+    return {
+      success: false,
+      msg: "Tipo do evento não encontrado",
+    };
+  }
+  const eventCategoryExists = await EventCategory.findById(category_id);
+  if (!eventCategoryExists) {
+    return {
+      success: false,
+      msg: "Categoria (modalidade) do evento não encontrada",
+    };
+  }
+  const eventCoverageExists = await EventCoverage.findById(coverage_id);
+  if (!eventCoverageExists) {
+    return {
+      success: false,
+      msg: "Abrangência do evento não encontrada",
+    };
+  }
+  return {
+    success: true,
+  };
 }
