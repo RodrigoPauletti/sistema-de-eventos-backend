@@ -19,13 +19,13 @@ router.post("/all", reqAuth, async function (req, res) {
     if (!userLogged) {
       return res.status(500).json({
         success: false,
-        msg: "Responsável do evento não encontrado.",
+        msg: "Erro ao buscar o usuário logado",
       });
     }
     if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
       return res.status(500).json({
         success: false,
-        msg: "Tipo ou permissão do usuário não informado.",
+        msg: "Tipo ou permissão do usuário não encontrado",
       });
     }
     // Se usuário for "Proponente", deve mostrar apenas eventos relacionados à eles
@@ -124,65 +124,68 @@ router.post("/create", (req, res) => {
     resources,
     receipt_amount,
     total_amount,
+    send_to_review,
   } = req.body;
 
   const status = "created";
+  console.log("send_to_review", send_to_review || false);
 
-  const query = {
-    event_type_id,
-    user_id,
-    name,
-    category_id,
-    category_second_field_value,
-    coverage_id,
-    coverage_second_field_value,
-    workload,
-    audience_estimate,
-    online,
-    link,
-    place,
-    ticket,
-    objective,
-    reason,
-    schedule,
-    details,
-    resources,
-    receipt_amount,
-    total_amount,
-    status,
-  };
+  // const query = {
+  //   event_type_id,
+  //   user_id,
+  //   name,
+  //   category_id,
+  //   category_second_field_value,
+  //   coverage_id,
+  //   coverage_second_field_value,
+  //   workload,
+  //   audience_estimate,
+  //   online,
+  //   link,
+  //   place,
+  //   ticket,
+  //   objective,
+  //   reason,
+  //   schedule,
+  //   details,
+  //   resources,
+  //   receipt_amount,
+  //   total_amount,
+  //   status,
+  //   send_to_review,
+  // };
 
-  try {
-    Event.create(query, function (err, event) {
-      if (err) {
-        const firstErrorKey = Object.keys(err.errors).shift();
-        if (firstErrorKey) {
-          return res.status(500).json({
-            success: false,
-            msg: err.errors[firstErrorKey].message,
-          });
-        }
-        return res.status(500).json({
-          success: false,
-          msg: err,
-        });
-      }
+  // try {
+  //   Event.create(query, function (err, event) {
+  //     if (err) {
+  //       const firstErrorKey = Object.keys(err.errors).shift();
+  //       if (firstErrorKey) {
+  //         return res.status(500).json({
+  //           success: false,
+  //           msg: err.errors[firstErrorKey].message,
+  //         });
+  //       }
+  //       return res.status(500).json({
+  //         success: false,
+  //         msg: err,
+  //       });
+  //     }
 
-      // TODO: Create event dates (from ID: event._id)
-      // TODO: Create event lecturers (from ID: event._id)
-      // TODO: Create event organizers (from ID: event._id)
-      // TODO: Create event expenses (from ID: event._id)
+  //     // TODO: Create event dates (from ID: event._id)
+  //     // TODO: Create event lecturers (from ID: event._id)
+  //     // TODO: Create event organizers (from ID: event._id)
+  //     // TODO: Create event expenses (from ID: event._id)
 
-      return res.json({
-        success: true,
-        eventID: event._id,
-        msg: "Evento criado com sucesso",
-      });
-    });
-    // return res.status(500).json({ success: false });
-  } catch (err) {
-    return res.status(500).json({ success: false, msg: err });
-  }
+  //     return res.json({
+  //       success: true,
+  //       eventID: event._id,
+  //       msg: "Evento criado com sucesso",
+  //     });
+  //   });
+  //   // return res.status(500).json({ success: false });
+  // } catch (err) {
+  //   return res.status(500).json({ success: false, msg: err });
+  // }
 });
 
 router.post("/get/:eventID", reqAuth, async function (req, res) {
@@ -198,13 +201,13 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
     if (!userLogged) {
       return res.status(500).json({
         success: false,
-        msg: "Responsável do evento não encontrado.",
+        msg: "Erro ao buscar o usuário logado",
       });
     }
     if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
       return res.status(500).json({
         success: false,
-        msg: "Tipo ou permissão do usuário não informado.",
+        msg: "Tipo ou permissão do usuário não encontrado",
       });
     }
 
@@ -229,14 +232,19 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         },
       ])
       .then(async (event) => {
-        // Usuário é "Proponente" e o evento não está disponível para ele
+        if (!event) {
+          return res
+            .status(500)
+            .json({ success: false, msg: "Evento não encontrado" });
+        }
+        // Usuário é "Proponente" e o evento não está disponível para ele consultar
         if (
           userLogged.user_type_id.permission === "1" &&
           ["created", "correct", "finished"].indexOf(event.status) === -1
         ) {
           return res.status(500).json({
             success: false,
-            msg: "Você não tem permissão para acessar esse evento.",
+            msg: "Você não tem permissão para acessar esse evento",
           });
         }
 
@@ -245,48 +253,53 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
           event.user_id._id &&
           event.user_id._id.toString() === user_id
         ) {
-          if (event) {
-            if (event.dates && event.dates.length) {
-              event.dates = event.dates.map(function (date) {
-                const dt = date.toJSON();
-                dt.date = toDateFormatted(date.start_date, true);
-                dt.start_time = transformDateToTime(date.start_date);
-                dt.end_time = transformDateToTime(date.end_date);
-                dt.start_date = undefined;
-                dt.end_date = undefined;
-                return dt;
-              });
-            }
-            if (event.lecturers && event.lecturers.length) {
-              event.lecturers = event.lecturers.map(function (lecturer) {
-                const lect = lecturer.toJSON();
-                lect.name = lecturer.lecturer_id.name;
-                lect.office = lecturer.lecturer_id.office;
-                lect.lattes = lecturer.lecturer_id.lattes;
-                lect.guest = lecturer.type === "guest";
-                lect.type = undefined;
-                lect.lecturer_id = undefined;
-                lect.event_id = undefined;
-                return lect;
-              });
-            }
-            if (event.organizers && event.organizers.length) {
-              event.organizers = event.organizers.map(function (organizer) {
-                const org = organizer.toJSON();
-                org.name = organizer.organizer_id.name;
-                org.identification = organizer.organizer_id.identification;
-                org.organizer_id = undefined;
-                org.event_id = undefined;
-                return org;
-              });
-            }
-            return res.json(event);
+          if (event.dates && event.dates.length) {
+            event.dates = event.dates.map(function (date) {
+              const dt = date.toJSON();
+              dt.date = toDateFormatted(date.start_date, true);
+              dt.start_time = transformDateToTime(date.start_date);
+              dt.end_time = transformDateToTime(date.end_date);
+              dt.start_date = undefined;
+              dt.end_date = undefined;
+              return dt;
+            });
           }
-          return res.status(500).json({ success: false });
+          if (event.lecturers && event.lecturers.length) {
+            event.lecturers = event.lecturers.map(function (lecturer) {
+              const lect = lecturer.toJSON();
+              lect.name = lecturer.lecturer_id.name;
+              lect.office = lecturer.lecturer_id.office;
+              lect.lattes = lecturer.lecturer_id.lattes;
+              lect.guest = lecturer.type === "guest";
+              lect.type = undefined;
+              lect.lecturer_id = undefined;
+              lect.event_id = undefined;
+              return lect;
+            });
+          }
+          if (event.organizers && event.organizers.length) {
+            event.organizers = event.organizers.map(function (organizer) {
+              const org = organizer.toJSON();
+              org.name = organizer.organizer_id.name;
+              org.identification = organizer.organizer_id.identification;
+              org.organizer_id = undefined;
+              org.event_id = undefined;
+              return org;
+            });
+          }
+          if (event.expenses && event.expenses.length) {
+            event.expenses = event.expenses.map(function (expense) {
+              const exp = expense.toJSON();
+              exp.amount = exp.amount.toFixed(2);
+              exp.event_id = undefined;
+              return exp;
+            });
+          }
+          return res.json(event);
         }
         return res.status(500).json({
           success: false,
-          msg: "Você não tem permissão para acessar esse evento.",
+          msg: "Você não tem permissão para acessar esse evento",
         });
       });
   } catch (err) {
@@ -317,7 +330,10 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
     resources,
     receipt_amount,
     total_amount,
+    send_to_review,
   } = req.body;
+
+  // send_to_review =
 
   try {
     Event.find({ _id: eventID }).then(async (event) => {
@@ -325,73 +341,80 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
         const token = String(req.headers.authorization);
         const session = await ActiveSession.find({ token: token });
         const user_id = session[0].userId;
-
-        if (
-          event.user_id &&
-          event.user_id._id &&
-          event.user_id._id.toString() === user_id
-          // TODO: ou usuário atual é adm/central/etc...
-        ) {
-          const oldStatus = event.status;
-
-          // case "created": // Criado
-          // case "revision": // Em revisão
-          // case "correct": // Corrigir
-          // case "refused": // Recusado
-          // case "approved": // Aprovado
-          // case "finished": // Finalizado
-
-          const newStatus =
-            oldStatus === "created" || oldStatus === "correct"
-              ? "revision"
-              : oldStatus;
-
-          const query = { _id: event[0]._id };
-          const newvalues = {
-            $set: {
-              event_type_id,
-              name,
-              category_id,
-              category_second_field_value,
-              coverage_id,
-              coverage_second_field_value,
-              workload,
-              audience_estimate,
-              online,
-              link,
-              place,
-              ticket,
-              objective,
-              reason,
-              schedule,
-              details,
-              resources,
-              receipt_amount,
-              total_amount,
-              status: newStatus,
-            },
-          };
-          Event.updateOne(query, newvalues, function (err, cb) {
-            if (err) {
-              return res.status(500).json({
-                success: false,
-                msg: "Ocorreu um erro. Favor contatar o administrador",
-              });
-            }
-            // TODO: Update event dates
-            // TODO: Update event lecturers
-            // TODO: Update event organizers
-            // TODO: Update event expenses
-            return res.json({ success: true });
-          });
-        } else {
+        const userLogged = await User.findById(user_id)
+          .populate("user_type_id", "permission")
+          .select("name");
+        if (!userLogged) {
           return res.status(500).json({
             success: false,
-            msg: "Você não tem permissão para alterar esse evento.",
+            msg: "Erro ao buscar o usuário logado",
           });
         }
+        if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+          return res.status(500).json({
+            success: false,
+            msg: "Tipo ou permissão do usuário não encontrado",
+          });
+        }
+        // Usuário é "Proponente" e o evento não está disponível para ele alterar
+        if (
+          userLogged.user_type_id.permission === "1" &&
+          ["created", "correct", "finished"].indexOf(event.status) === -1
+        ) {
+          return res.status(500).json({
+            success: false,
+            msg: "Você não tem permissão para alterar esse evento",
+          });
+        }
+        const oldStatus = event.status;
+
+        const newStatus =
+          oldStatus === "created" || oldStatus === "correct"
+            ? "revision"
+            : oldStatus;
+
+        const query = { _id: event[0]._id };
+        const newvalues = {
+          $set: {
+            event_type_id,
+            name,
+            category_id,
+            category_second_field_value,
+            coverage_id,
+            coverage_second_field_value,
+            workload,
+            audience_estimate,
+            online,
+            link,
+            place,
+            ticket,
+            objective,
+            reason,
+            schedule,
+            details,
+            resources,
+            receipt_amount,
+            total_amount,
+            status: newStatus,
+          },
+        };
+        Event.updateOne(query, newvalues, function (err, cb) {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              msg: "Ocorreu um erro. Favor contatar o administrador",
+            });
+          }
+          // TODO: Update event dates
+          // TODO: Update event lecturers
+          // TODO: Update event organizers
+          // TODO: Update event expenses
+          return res.json({ success: true });
+        });
       }
-      return res.status(500).json({ success: false });
+      return res
+        .status(500)
+        .json({ success: false, msg: "Evento não encontrado" });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
@@ -402,16 +425,50 @@ router.delete("/:eventID", reqAuth, function (req, res) {
   const { eventID } = req.params;
 
   try {
-    Event.findByIdAndDelete({ _id: eventID }).then((event) => {
+    Event.findById({ _id: eventID }).then(async (event) => {
       if (event) {
-        // setTimeout(() => {
-        return res.json({ success: true });
-        // }, 2000);
-      } else {
-        return res
-          .status(500)
-          .json({ success: false, msg: "Erro ao deletar o evento" });
+        const token = String(req.headers.authorization);
+        const session = await ActiveSession.find({ token: token });
+        const user_id = session[0].userId;
+        const userLogged = await User.findById(user_id)
+          .populate("user_type_id", "permission")
+          .select("name");
+        if (!userLogged) {
+          return res.status(500).json({
+            success: false,
+            msg: "Erro ao buscar o usuário logado",
+          });
+        }
+        if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+          return res.status(500).json({
+            success: false,
+            msg: "Tipo ou permissão do usuário não encontrado",
+          });
+        }
+        // Usuário é "Proponente" e o evento não está disponível para ele deletar
+        if (
+          userLogged.user_type_id.permission === "1" &&
+          ["created", "correct", "finished"].indexOf(event.status) === -1
+        ) {
+          return res.status(500).json({
+            success: false,
+            msg: "Você não tem permissão para deletar esse evento",
+          });
+        }
+        return event
+          .deleteOne()
+          .then(() => {
+            return res.json({ success: true });
+          })
+          .catch(() => {
+            return res
+              .status(500)
+              .json({ success: false, msg: "Erro ao deletar o evento" });
+          });
       }
+      return res
+        .status(500)
+        .json({ success: false, msg: "Evento não encontrado" });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
