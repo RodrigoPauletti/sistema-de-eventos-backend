@@ -1,0 +1,4 @@
+{"_id":{"$oid":"60a8607b5ba30e2924e0801a"},"status":"1","name":"Proponente","permission":"1","createdAt":{"$date":{"$numberLong":"1621647483279"}},"updatedAt":{"$date":{"$numberLong":"1621647483279"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"61243b15c31cf450c874def6"},"status":"1","name":"Administrador","permission":"5","createdAt":{"$date":{"$numberLong":"1621647483279"}},"updatedAt":{"$date":{"$numberLong":"1621647483279"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"61243b1dc31cf450c874def7"},"status":"1","name":"Central de Relacionamento","permission":"3","createdAt":{"$date":{"$numberLong":"1621647483279"}},"updatedAt":{"$date":{"$numberLong":"1621647483279"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"61256b780af52e492c49e527"},"status":"1","name":"Marketing","permission":"2","createdAt":{"$date":{"$numberLong":"1621647483279"}},"updatedAt":{"$date":{"$numberLong":"1621647483279"}},"__v":{"$numberInt":"0"}}

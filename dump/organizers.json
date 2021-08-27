@@ -1,0 +1,2 @@
+{"_id":{"$oid":"611c5188e84f213730bbe7c1"},"name":"Org. Rodrigo","identification":"Acadêmico","status":"1","createdAt":{"$date":{"$numberLong":"1629245832174"}},"updatedAt":{"$date":{"$numberLong":"1629245832174"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"611c51dfed50624ef4539561"},"name":"Org. 2 Rodrigo","identification":"Estagiário","status":"1","createdAt":{"$date":{"$numberLong":"1629245832174"}},"updatedAt":{"$date":{"$numberLong":"1629245832174"}},"__v":{"$numberInt":"0"}}

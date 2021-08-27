@@ -1,0 +1,2 @@
+{"_id":{"$oid":"611b06c11e73623a74b37287"},"name":"Rodrigo Pauletti","office":"Analista de Suporte Técnico","lattes":"https://www.google.com","status":"1","createdAt":{"$date":{"$numberLong":"1629161153508"}},"updatedAt":{"$date":{"$numberLong":"1629161153508"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"611b085129bed44e1c73e9aa"},"name":"Pauletti Rodrigo","office":"Suporte TI","lattes":"2222://www.google.com","status":"1","createdAt":{"$date":{"$numberLong":"1629161153508"}},"updatedAt":{"$date":{"$numberLong":"1629161153508"}},"__v":{"$numberInt":"0"}}

@@ -1,0 +1,3 @@
+{"_id":{"$oid":"6113056495cf4203f8a2fbf6"},"name":"Transporte","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"6113056a95cf4203f8a2fbf7"},"name":"Materiais","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"6113056e95cf4203f8a2fbf8"},"name":"Brindes","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
