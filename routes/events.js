@@ -130,10 +130,14 @@ router.post("/create", async (req, res) => {
     event_type_id,
     user_id,
     name,
-    category_id,
-    category_second_field_value,
-    coverage_id,
-    coverage_second_field_value,
+    category: {
+      id: category_id,
+      second_field_value: category_second_field_value,
+    },
+    coverage: {
+      id: coverage_id,
+      second_field_value: coverage_second_field_value,
+    },
     workload,
     audience_estimate,
     online,
@@ -208,14 +212,18 @@ router.post("/create", async (req, res) => {
         });
       }
 
+      const eventID = event._id;
+
       // TODO: Create event dates (from ID: event._id)
+      // TODO: Create lecturers (if not exists)
       // TODO: Create event lecturers (from ID: event._id)
+      // TODO: Create organizers (if not exists)
       // TODO: Create event organizers (from ID: event._id)
       // TODO: Create event expenses (from ID: event._id)
 
       return res.json({
         success: true,
-        eventID: event._id,
+        eventID: eventID,
         msg: "Evento criado com sucesso",
       });
     });
@@ -265,7 +273,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         {
           path: "expenses",
           select: "expense_id provider amount file comments",
-          populate: { path: "event_expense_type_id" },
+          populate: { path: "event_expense_type_id", select: "name" },
         },
       ])
       .then(async (event) => {
@@ -296,6 +304,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
               dt.date = toDateFormatted(date.start_date, true);
               dt.start_time = transformDateToTime(date.start_date);
               dt.end_time = transformDateToTime(date.end_date);
+              dt.event_id = undefined;
               dt.start_date = undefined;
               dt.end_date = undefined;
               return dt;
@@ -309,7 +318,6 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
               lect.lattes = lecturer.lecturer_id.lattes;
               lect.guest = lecturer.type === "guest";
               lect.type = undefined;
-              lect.lecturer_id = undefined;
               lect.event_id = undefined;
               return lect;
             });
@@ -319,7 +327,6 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
               const org = organizer.toJSON();
               org.name = organizer.organizer_id.name;
               org.identification = organizer.organizer_id.identification;
-              org.organizer_id = undefined;
               org.event_id = undefined;
               return org;
             });
@@ -350,10 +357,14 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
   const {
     event_type_id,
     name,
-    category_id,
-    category_second_field_value,
-    coverage_id,
-    coverage_second_field_value,
+    category: {
+      id: category_id,
+      second_field_value: category_second_field_value,
+    },
+    coverage: {
+      id: coverage_id,
+      second_field_value: coverage_second_field_value,
+    },
     workload,
     audience_estimate,
     online,
@@ -476,7 +487,9 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           });
         }
         // TODO: Update event dates
+        // TODO: Create lecturers (if not exists)
         // TODO: Update event lecturers
+        // TODO: Create organizers (if not exists)
         // TODO: Update event organizers
         // TODO: Update event expenses
         return res.json({ success: true });
