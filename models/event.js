@@ -45,17 +45,13 @@ const EventSchema = new mongoose.Schema(
       },
     },
     online: {
-      type: String,
-      enum: {
-        values: [0, 1],
-        message: "Valor 'online' inválido",
-      },
+      type: Boolean,
       required: true,
     },
     link: {
       type: String,
       required: function () {
-        return this.online == 1;
+        return this.online;
       },
     },
     place: {

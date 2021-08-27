@@ -127,9 +127,8 @@ router.post("/all", reqAuth, async function (req, res) {
 
 router.post("/create", async (req, res) => {
   const {
-    event_type_id,
-    user_id,
     name,
+    event_type_id,
     category: {
       id: category_id,
       second_field_value: category_second_field_value,
@@ -138,47 +137,73 @@ router.post("/create", async (req, res) => {
       id: coverage_id,
       second_field_value: coverage_second_field_value,
     },
+    dates,
     workload,
+    place,
     audience_estimate,
     online,
     link,
-    place,
     ticket,
     objective,
     reason,
     schedule,
     details,
     resources,
+    lecturers,
+    organizers,
+    expenses,
     receipt_amount,
     total_amount,
     send_to_review,
   } = req.body;
 
-  const query = {
-    event_type_id,
-    user_id,
-    name,
-    category_id,
-    category_second_field_value,
-    coverage_id,
-    coverage_second_field_value,
-    workload,
-    audience_estimate,
-    online,
-    link,
-    place,
-    ticket,
-    objective,
-    reason,
-    schedule,
-    details,
-    resources,
-    receipt_amount,
-    total_amount,
-    status: send_to_review ? "revision" : "created", // Se é alteração do status, é alterado para "Em revisão"
-  };
-
   try {
+    const token = String(req.headers.authorization);
+    const session = await ActiveSession.find({ token });
+    const user_id = session[0].userId;
+    const userLogged = await User.findById(user_id)
+      .populate("user_type_id", "permission")
+      .select("name");
+    if (!userLogged) {
+      return res.status(500).json({
+        success: false,
+        msg: "Erro ao buscar o usuário logado",
+      });
+    }
+    if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+      return res.status(500).json({
+        success: false,
+        msg: "Tipo ou permissão do usuário não encontrado",
+      });
+    }
+
+    const query = {
+      user_id,
+      name,
+      event_type_id,
+      category_id,
+      category_second_field_value,
+      coverage_id,
+      coverage_second_field_value,
+      workload,
+      place,
+      audience_estimate,
+      online,
+      link,
+      ticket,
+      objective,
+      reason,
+      schedule,
+      details,
+      resources,
+      lecturers,
+      organizers,
+      expenses,
+      receipt_amount,
+      total_amount,
+      status: send_to_review ? "revision" : "created", // Se é alteração do status, é alterado para "Em revisão"
+    };
+
     const validation = await validateEventNameUserTypeCategoryAndCoverage({
       event_name: name,
       event_id: null,
@@ -214,6 +239,8 @@ router.post("/create", async (req, res) => {
 
       const eventID = event._id;
 
+      if (dates) {
+      }
       // TODO: Create event dates (from ID: event._id)
       // TODO: Create lecturers (if not exists)
       // TODO: Create event lecturers (from ID: event._id)
@@ -355,8 +382,8 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
   const { eventID } = req.params;
 
   const {
-    event_type_id,
     name,
+    event_type_id,
     category: {
       id: category_id,
       second_field_value: category_second_field_value,
@@ -365,17 +392,21 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
       id: coverage_id,
       second_field_value: coverage_second_field_value,
     },
+    dates,
     workload,
+    place,
     audience_estimate,
     online,
     link,
-    place,
     ticket,
     objective,
     reason,
     schedule,
     details,
     resources,
+    lecturers,
+    organizers,
+    expenses,
     receipt_amount,
     total_amount,
     send_to_review,
@@ -457,23 +488,27 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
       const query = { _id: event._id };
       const newvalues = {
         $set: {
-          event_type_id,
           name,
+          event_type_id,
           category_id,
           category_second_field_value,
           coverage_id,
           coverage_second_field_value,
+          dates,
           workload,
+          place,
           audience_estimate,
           online,
           link,
-          place,
           ticket,
           objective,
           reason,
           schedule,
           details,
           resources,
+          lecturers,
+          organizers,
+          expenses,
           receipt_amount,
           total_amount,
           status: newStatus,
@@ -610,6 +645,7 @@ async function validateEventNameUserTypeCategoryAndCoverage({
   const eventAlreadyExists = await Event.findOne({ name: event_name });
   if (
     eventAlreadyExists &&
+    event_id &&
     eventAlreadyExists._id.toString() !== event_id.toString()
   ) {
     return {
