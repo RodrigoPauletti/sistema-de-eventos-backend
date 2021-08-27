@@ -645,8 +645,8 @@ async function validateEventNameUserTypeCategoryAndCoverage({
   const eventAlreadyExists = await Event.findOne({ name: event_name });
   if (
     eventAlreadyExists &&
-    event_id &&
-    eventAlreadyExists._id.toString() !== event_id.toString()
+    (!event_id ||
+      (event_id && eventAlreadyExists._id.toString() !== event_id.toString()))
   ) {
     return {
       success: false,
