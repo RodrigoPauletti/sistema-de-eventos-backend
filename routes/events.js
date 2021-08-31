@@ -5,6 +5,13 @@ const Event = require("../models/event");
 const EventType = require("../models/eventType");
 const EventCategory = require("../models/eventCategory");
 const EventCoverage = require("../models/eventCoverage");
+const EventDate = require("../models/eventDate");
+const Lecturer = require("../models/lecturer");
+const EventLecturer = require("../models/eventLecturer");
+const Organizer = require("../models/organizer");
+const EventOrganizer = require("../models/eventOrganizer");
+const EventExpense = require("../models/eventExpense");
+const EventExpenseType = require("../models/eventExpenseType");
 const User = require("../models/user");
 const ActiveSession = require("../models/activeSession");
 
@@ -157,6 +164,8 @@ router.post("/create", async (req, res) => {
     send_to_review,
   } = req.body;
 
+  let eventID = null;
+
   try {
     const token = String(req.headers.authorization);
     const session = await ActiveSession.find({ token });
@@ -196,9 +205,6 @@ router.post("/create", async (req, res) => {
       schedule,
       details,
       resources,
-      lecturers,
-      organizers,
-      expenses,
       receipt_amount,
       total_amount,
       status: send_to_review ? "revision" : "created", // Se é alteração do status, é alterado para "Em revisão"
@@ -222,7 +228,7 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    Event.create(query, function (err, event) {
+    Event.create(query, async function (err, event) {
       if (err) {
         const firstErrorKey = Object.keys(err.errors).shift();
         if (firstErrorKey) {
@@ -237,16 +243,186 @@ router.post("/create", async (req, res) => {
         });
       }
 
-      const eventID = event._id;
+      eventID = event._id;
 
-      if (dates) {
+      // Relate each date to event
+      if (dates && dates.length) {
+        dates.forEach(async (date) => {
+          const dateQuery = {
+            event_id: eventID,
+            start_date: `${new Date(
+              `${date.date}T${date.start_time}:00.000Z`
+            ).toISOString()}`,
+            end_date: `${new Date(
+              `${date.date}T${date.end_time}:00.000Z`
+            ).toISOString()}`,
+          };
+
+          // TODO: Remove after tests
+          await EventDate.deleteMany({ event_id: eventID });
+
+          EventDate.create(dateQuery).catch((err) => {
+            return res.status(500).json({
+              success: false,
+              msg:
+                err._message ||
+                `Erro ao vincular a data "${date.date} ${date.start_time}" até "${date.date} ${date.end_time}" ao evento ${name}`,
+            });
+          });
+        });
       }
-      // TODO: Create event dates (from ID: event._id)
-      // TODO: Create lecturers (if not exists)
-      // TODO: Create event lecturers (from ID: event._id)
-      // TODO: Create organizers (if not exists)
-      // TODO: Create event organizers (from ID: event._id)
-      // TODO: Create event expenses (from ID: event._id)
+
+      // Relate each lecturer to event
+      if (lecturers && lecturers.length) {
+        lecturers.forEach(async (lecturer) => {
+          const { name: lecturerName, office, lattes, guest } = lecturer;
+          const lecturerAlreadyExists = await Lecturer.findOne({
+            name: lecturerName,
+          });
+          let lecturer_id = null;
+          if (lecturerAlreadyExists) {
+            lecturer_id = lecturerAlreadyExists._id;
+          } else {
+            // Create lecturer (if not exists)
+            const lecturerQuery = {
+              name: lecturerName,
+              office,
+              lattes,
+              status: "1",
+            };
+            const newLecturer = await Lecturer.create(lecturerQuery);
+            // .catch(
+            //   (err) => {
+            //     return res.status(500).json({
+            //       success: false,
+            //       msg:
+            //         err._message ||
+            //         `Erro ao criar o palestrante/convidado "${lecturerName}"`,
+            //     });
+            //   }
+            // );
+            lecturer_id = newLecturer._id;
+          }
+          const eventLecturerQuery = {
+            event_id: eventID,
+            lecturer_id,
+            type: guest ? "guest" : "lecturer",
+          };
+
+          // TODO: Remove after tests
+          await EventLecturer.deleteMany({ event_id: eventID });
+
+          // Relate lecturer to event
+          await EventLecturer.create(eventLecturerQuery);
+          // .catch((err) => {
+          //   return res.status(500).json({
+          //     success: false,
+          //     msg:
+          //       err._message ||
+          //       `Erro ao vincular o palestrante/convidado "${lecturerName}" ao evento ${name}`,
+          //   });
+          // });
+        });
+      }
+
+      // Relate each organizer to event
+      if (organizers && organizers.length) {
+        organizers.forEach(async (organizer) => {
+          const {
+            name: organizerName,
+            identification,
+            office,
+            workload,
+          } = organizer;
+          const organizerAlreadyExists = await Organizer.findOne({
+            name: organizerName,
+          });
+          let organizer_id = null;
+          if (organizerAlreadyExists) {
+            organizer_id = organizerAlreadyExists._id;
+          } else {
+            // Create organizer (if not exists)
+            const organizerQuery = {
+              name: organizerName,
+              identification,
+              status: "1",
+            };
+            const newOrganizer = await Organizer.create(organizerQuery);
+            // .catch(
+            //   (err) => {
+            //     return res.status(500).json({
+            //       success: false,
+            //       msg:
+            //         err._message ||
+            //         `Erro ao criar o organizador/colaborador "${organizerName}"`,
+            //     });
+            //   }
+            // );
+            organizer_id = newOrganizer._id;
+          }
+          const eventOrganizerQuery = {
+            event_id: eventID,
+            organizer_id,
+            office,
+            workload,
+          };
+
+          // TODO: Remove after tests
+          await EventOrganizer.deleteMany({ event_id: eventID });
+
+          // Relate organizer to event
+          await EventOrganizer.create(eventOrganizerQuery);
+          // .catch((err) => {
+          //   return res.status(500).json({
+          //     success: false,
+          //     msg:
+          //       err._message ||
+          //       `Erro ao vincular o organizador/colaborador "${organizerName}" ao evento ${name}`,
+          //   });
+          // });
+        });
+      }
+
+      // Relate each expense to event
+      if (expenses && expenses.length) {
+        expenses.forEach(async (expense) => {
+          const {
+            event_expense_type_id: { _id: event_expense_type_id },
+            provider,
+            amount,
+            file,
+            comments,
+          } = expense;
+
+          const eventExpenseTypeExists = await EventExpenseType.findById(
+            event_expense_type_id
+          );
+          if (eventExpenseTypeExists) {
+            const eventExpenseQuery = {
+              event_id: eventID,
+              event_expense_type_id,
+              provider,
+              amount,
+              file,
+              comments,
+            };
+
+            // TODO: Remove after tests
+            await EventExpense.deleteMany({ event_id: eventID });
+
+            // Relate Expense to event
+            await EventExpense.create(eventExpenseQuery);
+            // .catch((err) => {
+            //   return res.status(500).json({
+            //     success: false,
+            //     msg:
+            //       err._message ||
+            //       `Erro ao vincular a despesa "${provider}" ao evento ${name}`,
+            //   });
+            // });
+          }
+        });
+      }
 
       return res.json({
         success: true,
@@ -254,8 +430,14 @@ router.post("/create", async (req, res) => {
         msg: "Evento criado com sucesso",
       });
     });
-    // return res.status(500).json({ success: false });
+    if (eventID) {
+      console.log("EVENTID", eventID);
+      await Event.findByIdAndRemove(eventID);
+    }
+    return res.status(500).json({ success: false });
   } catch (err) {
+    console.log("EVENTID", eventID);
+    await Event.findByIdAndRemove(eventID);
     return res.status(500).json({ success: false, msg: err });
   }
 });
@@ -569,6 +751,19 @@ router.delete("/:eventID", reqAuth, function (req, res) {
             msg: "Você não tem permissão para deletar esse evento",
           });
         }
+
+        // Delete event's dates
+        await EventDate.deleteMany({ event_id: eventID });
+
+        // Delete event's lecturers
+        await EventLecturer.deleteMany({ event_id: eventID });
+
+        // Delete event's organizers
+        await EventOrganizer.deleteMany({ event_id: eventID });
+
+        // Delete event's expenses
+        await EventExpense.deleteMany({ event_id: eventID });
+
         return event
           .deleteOne()
           .then(() => {
