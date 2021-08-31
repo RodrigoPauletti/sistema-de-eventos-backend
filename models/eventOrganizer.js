@@ -12,6 +12,10 @@ const EventOrganizerSchema = new mongoose.Schema(
       ref: "Organizer",
       required: true,
     },
+    office: {
+      type: String,
+      required: true,
+    },
     workload: {
       type: Number,
       required: true,
