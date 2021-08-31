@@ -20,6 +20,9 @@ const EventExpenseSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    file: {
+      type: String,
+    },
     comments: {
       type: String,
     },
