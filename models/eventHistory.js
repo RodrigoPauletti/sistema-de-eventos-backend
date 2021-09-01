@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
 
-const EventSchema = new mongoose.Schema(
+const EventHistorySchema = new mongoose.Schema(
   {
+    event_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+      required: true,
+    },
     event_type_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EventType",
       required: true,
-    },
-    history: {
-      type: Boolean,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -109,6 +111,7 @@ const EventSchema = new mongoose.Schema(
     },
   },
   {
+    collection: "events_histories",
     timestamps: true,
     toJSON: {
       virtuals: true,
@@ -116,27 +119,27 @@ const EventSchema = new mongoose.Schema(
   }
 );
 
-EventSchema.virtual("dates", {
+EventHistorySchema.virtual("dates", {
   ref: "EventDate",
   localField: "_id",
   foreignField: "event_id",
 });
-EventSchema.virtual("lecturers", {
+EventHistorySchema.virtual("lecturers", {
   ref: "EventLecturer",
   localField: "_id",
   foreignField: "event_id",
 });
-EventSchema.virtual("organizers", {
+EventHistorySchema.virtual("organizers", {
   ref: "EventOrganizer",
   localField: "_id",
   foreignField: "event_id",
 });
-EventSchema.virtual("expenses", {
+EventHistorySchema.virtual("expenses", {
   ref: "EventExpense",
   localField: "_id",
   foreignField: "event_id",
 });
 
-const Event = mongoose.model("Event", EventSchema);
+const EventHistory = mongoose.model("EventHistory", EventHistorySchema);
 
-module.exports = Event;
+module.exports = EventHistory;

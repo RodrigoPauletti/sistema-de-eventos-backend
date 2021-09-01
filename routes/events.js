@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Event = require("../models/event");
+const EventHistory = require("../models/eventHistory");
 const EventType = require("../models/eventType");
 const EventCategory = require("../models/eventCategory");
 const EventCoverage = require("../models/eventCoverage");
@@ -245,184 +246,19 @@ router.post("/create", async (req, res) => {
 
       eventID = event._id;
 
+      addEventHistory(event);
+
       // Relate each date to event
-      if (dates && dates.length) {
-        dates.forEach(async (date) => {
-          const dateQuery = {
-            event_id: eventID,
-            start_date: `${new Date(
-              `${date.date}T${date.start_time}:00.000Z`
-            ).toISOString()}`,
-            end_date: `${new Date(
-              `${date.date}T${date.end_time}:00.000Z`
-            ).toISOString()}`,
-          };
-
-          // TODO: Remove after tests
-          await EventDate.deleteMany({ event_id: eventID });
-
-          EventDate.create(dateQuery).catch((err) => {
-            return res.status(500).json({
-              success: false,
-              msg:
-                err._message ||
-                `Erro ao vincular a data "${date.date} ${date.start_time}" até "${date.date} ${date.end_time}" ao evento ${name}`,
-            });
-          });
-        });
-      }
+      relateDatesWithEvent(dates, eventID);
 
       // Relate each lecturer to event
-      if (lecturers && lecturers.length) {
-        lecturers.forEach(async (lecturer) => {
-          const { name: lecturerName, office, lattes, guest } = lecturer;
-          const lecturerAlreadyExists = await Lecturer.findOne({
-            name: lecturerName,
-          });
-          let lecturer_id = null;
-          if (lecturerAlreadyExists) {
-            lecturer_id = lecturerAlreadyExists._id;
-          } else {
-            // Create lecturer (if not exists)
-            const lecturerQuery = {
-              name: lecturerName,
-              office,
-              lattes,
-              status: "1",
-            };
-            const newLecturer = await Lecturer.create(lecturerQuery);
-            // .catch(
-            //   (err) => {
-            //     return res.status(500).json({
-            //       success: false,
-            //       msg:
-            //         err._message ||
-            //         `Erro ao criar o palestrante/convidado "${lecturerName}"`,
-            //     });
-            //   }
-            // );
-            lecturer_id = newLecturer._id;
-          }
-          const eventLecturerQuery = {
-            event_id: eventID,
-            lecturer_id,
-            type: guest ? "guest" : "lecturer",
-          };
-
-          // TODO: Remove after tests
-          await EventLecturer.deleteMany({ event_id: eventID });
-
-          // Relate lecturer to event
-          await EventLecturer.create(eventLecturerQuery);
-          // .catch((err) => {
-          //   return res.status(500).json({
-          //     success: false,
-          //     msg:
-          //       err._message ||
-          //       `Erro ao vincular o palestrante/convidado "${lecturerName}" ao evento ${name}`,
-          //   });
-          // });
-        });
-      }
+      relateLecturersWithEvent(lecturers, eventID);
 
       // Relate each organizer to event
-      if (organizers && organizers.length) {
-        organizers.forEach(async (organizer) => {
-          const {
-            name: organizerName,
-            identification,
-            office,
-            workload,
-          } = organizer;
-          const organizerAlreadyExists = await Organizer.findOne({
-            name: organizerName,
-          });
-          let organizer_id = null;
-          if (organizerAlreadyExists) {
-            organizer_id = organizerAlreadyExists._id;
-          } else {
-            // Create organizer (if not exists)
-            const organizerQuery = {
-              name: organizerName,
-              identification,
-              status: "1",
-            };
-            const newOrganizer = await Organizer.create(organizerQuery);
-            // .catch(
-            //   (err) => {
-            //     return res.status(500).json({
-            //       success: false,
-            //       msg:
-            //         err._message ||
-            //         `Erro ao criar o organizador/colaborador "${organizerName}"`,
-            //     });
-            //   }
-            // );
-            organizer_id = newOrganizer._id;
-          }
-          const eventOrganizerQuery = {
-            event_id: eventID,
-            organizer_id,
-            office,
-            workload,
-          };
-
-          // TODO: Remove after tests
-          await EventOrganizer.deleteMany({ event_id: eventID });
-
-          // Relate organizer to event
-          await EventOrganizer.create(eventOrganizerQuery);
-          // .catch((err) => {
-          //   return res.status(500).json({
-          //     success: false,
-          //     msg:
-          //       err._message ||
-          //       `Erro ao vincular o organizador/colaborador "${organizerName}" ao evento ${name}`,
-          //   });
-          // });
-        });
-      }
+      relateOrganizersWithEvent(organizers, eventID);
 
       // Relate each expense to event
-      if (expenses && expenses.length) {
-        expenses.forEach(async (expense) => {
-          const {
-            event_expense_type_id: { _id: event_expense_type_id },
-            provider,
-            amount,
-            file,
-            comments,
-          } = expense;
-
-          const eventExpenseTypeExists = await EventExpenseType.findById(
-            event_expense_type_id
-          );
-          if (eventExpenseTypeExists) {
-            const eventExpenseQuery = {
-              event_id: eventID,
-              event_expense_type_id,
-              provider,
-              amount,
-              file,
-              comments,
-            };
-
-            // TODO: Remove after tests
-            await EventExpense.deleteMany({ event_id: eventID });
-
-            // Relate Expense to event
-            await EventExpense.create(eventExpenseQuery);
-            // .catch((err) => {
-            //   return res.status(500).json({
-            //     success: false,
-            //     msg:
-            //       err._message ||
-            //       `Erro ao vincular a despesa "${provider}" ao evento ${name}`,
-            //   });
-            // });
-          }
-        });
-      }
+      relateExpensesWithEvent(expenses, eventID);
 
       return res.json({
         success: true,
@@ -430,14 +266,8 @@ router.post("/create", async (req, res) => {
         msg: "Evento criado com sucesso",
       });
     });
-    if (eventID) {
-      console.log("EVENTID", eventID);
-      await Event.findByIdAndRemove(eventID);
-    }
-    return res.status(500).json({ success: false });
+    // return res.status(500).json({ success: false });
   } catch (err) {
-    console.log("EVENTID", eventID);
-    await Event.findByIdAndRemove(eventID);
     return res.status(500).json({ success: false, msg: err });
   }
 });
@@ -491,7 +321,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             .status(500)
             .json({ success: false, msg: "Evento não encontrado" });
         }
-        // Usuário é "Proponente" e o evento não está disponível para ele consultar
+        // Usuário logado é "Proponente" e o evento não está disponível para ele consultar
         if (
           userLogged.user_type_id.permission === "1" &&
           ["created", "correct", "finished"].indexOf(event.status) === -1
@@ -619,7 +449,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           msg: "Tipo ou permissão do usuário não encontrado",
         });
       }
-      // Usuário é "Proponente" e o evento não está disponível para ele alterar
+      // Usuário logado é "Proponente" e o evento não está disponível para ele alterar
       if (
         userLogged.user_type_id.permission === "1" &&
         ["created", "correct", "finished"].indexOf(event.status) === -1
@@ -667,7 +497,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
 
       // TODO: Detectar alteração de status "Reprovado", "Aprovado" e "Finalizado"
 
-      const query = { _id: event._id };
+      const query = { _id: eventID };
       const newvalues = {
         $set: {
           name,
@@ -676,7 +506,6 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           category_second_field_value,
           coverage_id,
           coverage_second_field_value,
-          dates,
           workload,
           place,
           audience_estimate,
@@ -688,9 +517,6 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           schedule,
           details,
           resources,
-          lecturers,
-          organizers,
-          expenses,
           receipt_amount,
           total_amount,
           status: newStatus,
@@ -703,12 +529,28 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
             msg: "Ocorreu um erro. Favor contatar o administrador",
           });
         }
-        // TODO: Update event dates
-        // TODO: Create lecturers (if not exists)
-        // TODO: Update event lecturers
-        // TODO: Create organizers (if not exists)
-        // TODO: Update event organizers
-        // TODO: Update event expenses
+
+        addEventHistory({
+          ...event,
+          event_id: eventID,
+          dates,
+          lecturers,
+          organizers,
+          expenses,
+        });
+
+        // Relate each date to event
+        relateDatesWithEvent(dates, eventID);
+
+        // Relate each lecturer to event
+        relateLecturersWithEvent(lecturers, eventID);
+
+        // Relate each organizer to event
+        relateOrganizersWithEvent(organizers, eventID);
+
+        // Relate each expense to event
+        relateExpensesWithEvent(expenses, eventID);
+
         return res.json({ success: true });
       });
     });
@@ -741,7 +583,7 @@ router.delete("/:eventID", reqAuth, function (req, res) {
             msg: "Tipo ou permissão do usuário não encontrado",
           });
         }
-        // Usuário é "Proponente" e o evento não está disponível para ele deletar
+        // Usuário logado é "Proponente" e o evento não está disponível para ele deletar
         if (
           userLogged.user_type_id.permission === "1" &&
           ["created", "correct", "finished"].indexOf(event.status) === -1
@@ -879,4 +721,200 @@ async function validateEventNameUserTypeCategoryAndCoverage({
   return {
     success: true,
   };
+}
+
+async function addEventHistory(event) {
+  const { event_id, dates, lecturers, organizers, expenses } = event;
+  const newEvent = await EventHistory.create({ event_id, ...event._doc });
+
+  relateDatesWithEvent(dates, newEvent._id);
+  relateLecturersWithEvent(lecturers, newEvent._id);
+  relateOrganizersWithEvent(organizers, newEvent._id);
+  relateExpensesWithEvent(expenses, newEvent._id);
+}
+
+function relateDatesWithEvent(dates = [], eventID = null) {
+  if (dates && dates.length && eventID) {
+    dates.forEach(async (date) => {
+      const dateQuery = {
+        event_id: eventID,
+        start_date: `${new Date(
+          `${date.date}T${date.start_time}:00.000Z`
+        ).toISOString()}`,
+        end_date: `${new Date(
+          `${date.date}T${date.end_time}:00.000Z`
+        ).toISOString()}`,
+      };
+
+      await EventDate.deleteMany({ event_id: eventID });
+
+      await EventDate.create(dateQuery);
+      // .catch((err) => {
+      //   return res.status(500).json({
+      //     success: false,
+      //     msg:
+      //       err._message ||
+      //       `Erro ao vincular a data "${date.date} ${date.start_time}" até "${date.date} ${date.end_time}" ao evento ${name}`,
+      //   });
+      // });
+    });
+  }
+}
+
+function relateLecturersWithEvent(lecturers = [], eventID = null) {
+  if (lecturers && lecturers.length && eventID) {
+    if (lecturers && lecturers.length) {
+      lecturers.forEach(async (lecturer) => {
+        const { name: lecturerName, office, lattes, guest } = lecturer;
+        const lecturerAlreadyExists = await Lecturer.findOne({
+          name: lecturerName,
+        });
+        let lecturer_id = null;
+        if (lecturerAlreadyExists) {
+          lecturer_id = lecturerAlreadyExists._id;
+        } else {
+          // Create lecturer (if not exists)
+          const lecturerQuery = {
+            name: lecturerName,
+            office,
+            lattes,
+            status: "1",
+          };
+          const newLecturer = await Lecturer.create(lecturerQuery);
+          // .catch(
+          //   (err) => {
+          //     return res.status(500).json({
+          //       success: false,
+          //       msg:
+          //         err._message ||
+          //         `Erro ao criar o palestrante/convidado "${lecturerName}"`,
+          //     });
+          //   }
+          // );
+          lecturer_id = newLecturer._id;
+        }
+        const eventLecturerQuery = {
+          event_id: eventID,
+          lecturer_id,
+          type: guest ? "guest" : "lecturer",
+        };
+
+        await EventLecturer.deleteMany({ event_id: eventID });
+
+        // Relate lecturer to event
+        await EventLecturer.create(eventLecturerQuery);
+        // .catch((err) => {
+        //   return res.status(500).json({
+        //     success: false,
+        //     msg:
+        //       err._message ||
+        //       `Erro ao vincular o palestrante/convidado "${lecturerName}" ao evento ${name}`,
+        //   });
+        // });
+      });
+    }
+  }
+}
+
+function relateOrganizersWithEvent(organizers = [], eventID = null) {
+  if (organizers && organizers.length && eventID) {
+    if (organizers && organizers.length) {
+      organizers.forEach(async (organizer) => {
+        const {
+          name: organizerName,
+          identification,
+          office,
+          workload,
+        } = organizer;
+        const organizerAlreadyExists = await Organizer.findOne({
+          name: organizerName,
+        });
+        let organizer_id = null;
+        if (organizerAlreadyExists) {
+          organizer_id = organizerAlreadyExists._id;
+        } else {
+          // Create organizer (if not exists)
+          const organizerQuery = {
+            name: organizerName,
+            identification,
+            status: "1",
+          };
+          const newOrganizer = await Organizer.create(organizerQuery);
+          // .catch(
+          //   (err) => {
+          //     return res.status(500).json({
+          //       success: false,
+          //       msg:
+          //         err._message ||
+          //         `Erro ao criar o organizador/colaborador "${organizerName}"`,
+          //     });
+          //   }
+          // );
+          organizer_id = newOrganizer._id;
+        }
+        const eventOrganizerQuery = {
+          event_id: eventID,
+          organizer_id,
+          office,
+          workload,
+        };
+
+        await EventOrganizer.deleteMany({ event_id: eventID });
+
+        // Relate organizer to event
+        await EventOrganizer.create(eventOrganizerQuery);
+        // .catch((err) => {
+        //   return res.status(500).json({
+        //     success: false,
+        //     msg:
+        //       err._message ||
+        //       `Erro ao vincular o organizador/colaborador "${organizerName}" ao evento ${name}`,
+        //   });
+        // });
+      });
+    }
+  }
+}
+
+function relateExpensesWithEvent(expenses = [], eventID = null) {
+  if (expenses && expenses.length && eventID) {
+    if (expenses && expenses.length) {
+      expenses.forEach(async (expense) => {
+        const {
+          event_expense_type_id: { _id: event_expense_type_id },
+          provider,
+          amount,
+          file,
+          comments,
+        } = expense;
+
+        const eventExpenseTypeExists = await EventExpenseType.findById(
+          event_expense_type_id
+        );
+        if (eventExpenseTypeExists) {
+          const eventExpenseQuery = {
+            event_id: eventID,
+            event_expense_type_id,
+            provider,
+            amount,
+            file,
+            comments,
+          };
+
+          await EventExpense.deleteMany({ event_id: eventID });
+
+          // Relate Expense to event
+          await EventExpense.create(eventExpenseQuery);
+          // .catch((err) => {
+          //   return res.status(500).json({
+          //     success: false,
+          //     msg:
+          //       err._message ||
+          //       `Erro ao vincular a despesa "${provider}" ao evento ${name}`,
+          //   });
+          // });
+        }
+      });
+    }
+  }
 }
