@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 const Event = require("../models/event");
 const EventHistory = require("../models/eventHistory");
@@ -90,7 +91,7 @@ router.post("/all", reqAuth, async function (req, res) {
           ev.__v = undefined;
           ev.date = "";
           ev.disabled =
-            ["created", "correct", "finished"].indexOf(ev.status) !== -1 &&
+            ["created", "correct", "finished"].indexOf(ev.status) === -1 &&
             !adminChanging;
           if (item.dates && item.dates.length) {
             if (item.dates.length === 1) {
@@ -266,7 +267,6 @@ router.post("/create", async (req, res) => {
         msg: "Evento criado com sucesso",
       });
     });
-    // return res.status(500).json({ success: false });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
   }
@@ -332,57 +332,108 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
           });
         }
 
+        event.__v = undefined;
+
         if (
-          event.user_id &&
-          event.user_id._id &&
-          event.user_id._id.toString() === user_id
+          !event.user_id ||
+          !event.user_id._id ||
+          event.user_id._id.toString() !== user_id
         ) {
-          if (event.dates && event.dates.length) {
-            event.dates = event.dates.map(function (date) {
-              const dt = date.toJSON();
-              dt.date = toDateFormatted(date.start_date, true);
-              dt.start_time = transformDateToTime(date.start_date);
-              dt.end_time = transformDateToTime(date.end_date);
-              dt.event_id = undefined;
-              dt.start_date = undefined;
-              dt.end_date = undefined;
-              return dt;
-            });
-          }
-          if (event.lecturers && event.lecturers.length) {
-            event.lecturers = event.lecturers.map(function (lecturer) {
-              const lect = lecturer.toJSON();
-              lect.name = lecturer.lecturer_id.name;
-              lect.office = lecturer.lecturer_id.office;
-              lect.lattes = lecturer.lecturer_id.lattes;
-              lect.guest = lecturer.type === "guest";
-              lect.type = undefined;
-              lect.event_id = undefined;
-              return lect;
-            });
-          }
-          if (event.organizers && event.organizers.length) {
-            event.organizers = event.organizers.map(function (organizer) {
-              const org = organizer.toJSON();
-              org.name = organizer.organizer_id.name;
-              org.identification = organizer.organizer_id.identification;
-              org.event_id = undefined;
-              return org;
-            });
-          }
-          if (event.expenses && event.expenses.length) {
-            event.expenses = event.expenses.map(function (expense) {
-              const exp = expense.toJSON();
-              exp.amount = exp.amount.toFixed(2);
-              exp.event_id = undefined;
-              return exp;
-            });
-          }
-          return res.json(event);
+          return res.status(500).json({
+            success: false,
+            msg: "Você não tem permissão para acessar esse evento",
+          });
         }
-        return res.status(500).json({
-          success: false,
-          msg: "Você não tem permissão para acessar esse evento",
+        let dates = event.dates;
+        if (dates && dates.length) {
+          dates = dates.map(function (date) {
+            const dt = date.toJSON();
+            dt.date = toDateFormatted(date.start_date, true);
+            dt.start_time = transformDateToTime(date.start_date);
+            dt.end_time = transformDateToTime(date.end_date);
+            dt.event_id = undefined;
+            dt.start_date = undefined;
+            dt.end_date = undefined;
+            return dt;
+          });
+        }
+        let lecturers = event.lecturers;
+        if (lecturers && lecturers.length) {
+          lecturers = lecturers.map(function (lecturer) {
+            const lect = lecturer.toJSON();
+            lect.name = lecturer.lecturer_id.name;
+            lect.office = lecturer.lecturer_id.office;
+            lect.lattes = lecturer.lecturer_id.lattes;
+            lect.guest = lecturer.type === "guest";
+            lect.type = undefined;
+            lect.event_id = undefined;
+            return lect;
+          });
+        }
+        let organizers = event.organizers;
+        if (organizers && organizers.length) {
+          organizers = organizers.map(function (organizer) {
+            const org = organizer.toJSON();
+            org.name = organizer.organizer_id.name;
+            org.identification = organizer.organizer_id.identification;
+            org.event_id = undefined;
+            return org;
+          });
+        }
+        let expenses = event.expenses;
+        if (expenses && expenses.length) {
+          expenses = expenses.map(function (expense) {
+            const exp = expense.toJSON();
+            exp.amount = exp.amount.toFixed(2);
+            exp.event_id = undefined;
+            return exp;
+          });
+        }
+
+        let histories = null;
+
+        await EventHistory.find({ event_id: eventID })
+          .populate([
+            { path: "user_id", select: "name" },
+            { path: "event_type_id", select: "name" },
+            { path: "category_id", select: "name" },
+            { path: "coverage_id", select: "name" },
+            { path: "dates", select: "start_date end_date" },
+            {
+              path: "lecturers",
+              select: "lecturer_id type",
+              populate: { path: "lecturer_id", select: "name office lattes" },
+            },
+            {
+              path: "organizers",
+              select: "organizer_id office workload",
+              populate: {
+                path: "organizer_id",
+                select: "name identification",
+              },
+            },
+            {
+              path: "expenses",
+              select: "expense_id provider amount file comments",
+              populate: { path: "event_expense_type_id", select: "name" },
+            },
+          ])
+          .then(async (eventsHistories) => {
+            if (eventsHistories) {
+              eventsHistories.forEach((eventsHistory) => {
+                eventsHistory.__v = undefined;
+              });
+              histories = eventsHistories;
+            }
+          });
+
+        return res.json({
+          ...event.toObject(),
+          dates,
+          lecturers,
+          organizers,
+          expenses,
+          histories,
         });
       });
   } catch (err) {
@@ -533,6 +584,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
         addEventHistory({
           ...event,
           event_id: eventID,
+          user_id,
           dates,
           lecturers,
           organizers,
@@ -564,62 +616,62 @@ router.delete("/:eventID", reqAuth, function (req, res) {
 
   try {
     Event.findById({ _id: eventID }).then(async (event) => {
-      if (event) {
-        const token = String(req.headers.authorization);
-        const session = await ActiveSession.find({ token: token });
-        const user_id = session[0].userId;
-        const userLogged = await User.findById(user_id)
-          .populate("user_type_id", "permission")
-          .select("name");
-        if (!userLogged) {
-          return res.status(500).json({
-            success: false,
-            msg: "Erro ao buscar o usuário logado",
-          });
-        }
-        if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
-          return res.status(500).json({
-            success: false,
-            msg: "Tipo ou permissão do usuário não encontrado",
-          });
-        }
-        // Usuário logado é "Proponente" e o evento não está disponível para ele deletar
-        if (
-          userLogged.user_type_id.permission === "1" &&
-          ["created", "correct", "finished"].indexOf(event.status) === -1
-        ) {
-          return res.status(500).json({
-            success: false,
-            msg: "Você não tem permissão para deletar esse evento",
-          });
-        }
-
-        // Delete event's dates
-        await EventDate.deleteMany({ event_id: eventID });
-
-        // Delete event's lecturers
-        await EventLecturer.deleteMany({ event_id: eventID });
-
-        // Delete event's organizers
-        await EventOrganizer.deleteMany({ event_id: eventID });
-
-        // Delete event's expenses
-        await EventExpense.deleteMany({ event_id: eventID });
-
-        return event
-          .deleteOne()
-          .then(() => {
-            return res.json({ success: true });
-          })
-          .catch(() => {
-            return res
-              .status(500)
-              .json({ success: false, msg: "Erro ao deletar o evento" });
-          });
+      if (!event) {
+        return res
+          .status(500)
+          .json({ success: false, msg: "Evento não encontrado" });
       }
-      return res
-        .status(500)
-        .json({ success: false, msg: "Evento não encontrado" });
+      const token = String(req.headers.authorization);
+      const session = await ActiveSession.find({ token: token });
+      const user_id = session[0].userId;
+      const userLogged = await User.findById(user_id)
+        .populate("user_type_id", "permission")
+        .select("name");
+      if (!userLogged) {
+        return res.status(500).json({
+          success: false,
+          msg: "Erro ao buscar o usuário logado",
+        });
+      }
+      if (!userLogged.user_type_id || !userLogged.user_type_id.permission) {
+        return res.status(500).json({
+          success: false,
+          msg: "Tipo ou permissão do usuário não encontrado",
+        });
+      }
+      // Usuário logado é "Proponente" e o evento não está disponível para ele deletar
+      if (
+        userLogged.user_type_id.permission === "1" &&
+        ["created", "correct", "finished"].indexOf(event.status) === -1
+      ) {
+        return res.status(500).json({
+          success: false,
+          msg: "Você não tem permissão para deletar esse evento",
+        });
+      }
+
+      // Delete event's dates
+      await EventDate.deleteMany({ event_id: eventID });
+
+      // Delete event's lecturers
+      await EventLecturer.deleteMany({ event_id: eventID });
+
+      // Delete event's organizers
+      await EventOrganizer.deleteMany({ event_id: eventID });
+
+      // Delete event's expenses
+      await EventExpense.deleteMany({ event_id: eventID });
+
+      return event
+        .deleteOne()
+        .then(() => {
+          return res.json({ success: true });
+        })
+        .catch(() => {
+          return res
+            .status(500)
+            .json({ success: false, msg: "Erro ao deletar o evento" });
+        });
     });
   } catch (err) {
     return res.status(500).json({ success: false, msg: err });
@@ -725,7 +777,8 @@ async function validateEventNameUserTypeCategoryAndCoverage({
 
 async function addEventHistory(event) {
   const { event_id, dates, lecturers, organizers, expenses } = event;
-  const newEvent = await EventHistory.create({ event_id, ...event._doc });
+  const _id = mongoose.Types.ObjectId();
+  const newEvent = await EventHistory.create({ event_id, ...event._doc, _id });
 
   relateDatesWithEvent(dates, newEvent._id);
   relateLecturersWithEvent(lecturers, newEvent._id);
