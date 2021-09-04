@@ -420,8 +420,21 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
           ])
           .then(async (eventsHistories) => {
             if (eventsHistories) {
-              eventsHistories.forEach((eventsHistory) => {
-                eventsHistory.__v = undefined;
+              eventsHistories = eventsHistories.map((eventHistory) => {
+                const history = eventHistory.toJSON();
+                history.__v = undefined;
+                history.updatedAt = toDateFormatted(
+                  eventHistory.updatedAt,
+                  false,
+                  true
+                );
+                history.dates[0].start_date = toDateFormatted(
+                  eventHistory.dates[0].start_date
+                );
+                history.dates[0].end_date = toDateFormatted(
+                  eventHistory.dates[0].end_date
+                );
+                return history;
               });
               histories = eventsHistories;
             }
@@ -680,16 +693,25 @@ router.delete("/:eventID", reqAuth, function (req, res) {
 
 module.exports = router;
 
-function toDateFormatted(dateToFormat, ymdFormat = false) {
+function toDateFormatted(
+  dateToFormat,
+  ymdFormat = false,
+  dateWithTime = false
+) {
   const date = new Date(dateToFormat).toISOString().replace(/T(\S+)$/, ""); // Replacing the 'T00:00:00.000Z' part of the date
   const dateSplitted = date.split("-");
   if (ymdFormat) {
     return date;
   }
+  if (dateWithTime) {
+    return `${dateSplitted[2]}/${dateSplitted[1]}/${
+      dateSplitted[0]
+    } ${transformDateToTime(dateToFormat, true)}`;
+  }
   return `${dateSplitted[2]}/${dateSplitted[1]}/${dateSplitted[0]}`;
 }
 
-function transformDateToTime(dateToTransform) {
+function transformDateToTime(dateToTransform, withSeconds = false) {
   const date = new Date(dateToTransform);
   const hours =
     date.getUTCHours() < 10 ? `0${date.getUTCHours()}` : date.getUTCHours();
@@ -697,6 +719,13 @@ function transformDateToTime(dateToTransform) {
     date.getUTCMinutes() < 10
       ? `0${date.getUTCMinutes()}`
       : date.getUTCMinutes();
+  const seconds =
+    date.getUTCSeconds() < 10
+      ? `0${date.getUTCSeconds()}`
+      : date.getUTCSeconds();
+  if (withSeconds) {
+    return `${hours}:${minutes}:${seconds}`;
+  }
   return `${hours}:${minutes}`;
 }
 
