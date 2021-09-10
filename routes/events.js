@@ -423,6 +423,12 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
               eventsHistories = eventsHistories.map((eventHistory) => {
                 const history = eventHistory.toJSON();
                 history.online = history.online ? "Sim" : "Não";
+                history.receipt_amount = history.receipt_amount
+                  ? formatAmount(history.receipt_amount)
+                  : null;
+                history.total_amount = history.total_amount
+                  ? formatAmount(history.total_amount)
+                  : null;
                 history.__v = undefined;
                 history.updatedAt = toDateFormatted(
                   eventHistory.updatedAt,
@@ -454,6 +460,34 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
                       return historyLecturer;
                     }
                   );
+                }
+                if (history.organizers && history.organizers.length) {
+                  history.organizers = history.organizers.map(
+                    (historyOrganizer) => {
+                      historyOrganizer.infos = `${
+                        historyOrganizer.organizer_id.name
+                      } | ${historyOrganizer.organizer_id.identification} | ${
+                        historyOrganizer.office
+                      } | ${historyOrganizer.workload.toString()}h`;
+                      historyOrganizer.office = undefined;
+                      historyOrganizer.workload = undefined;
+                      historyOrganizer.organizer_id = undefined;
+                      return historyOrganizer;
+                    }
+                  );
+                }
+                if (history.expenses && history.expenses.length) {
+                  history.expenses = history.expenses.map((historyExpense) => {
+                    historyExpense.infos = `${
+                      historyExpense.event_expense_type_id.name
+                    } | ${historyExpense.provider} | ${formatAmount(
+                      historyExpense.amount
+                    )}`;
+                    historyExpense.provider = undefined;
+                    historyExpense.amount = undefined;
+                    historyExpense.event_expense_type_id = undefined;
+                    return historyExpense;
+                  });
                 }
                 return history;
               });
@@ -1020,4 +1054,11 @@ function relateExpensesWithEvent(expenses = [], eventID = null) {
       });
     }
   }
+}
+
+function formatAmount(amount) {
+  if (amount && !isNaN(amount)) {
+    return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
+  }
+  return null;
 }
