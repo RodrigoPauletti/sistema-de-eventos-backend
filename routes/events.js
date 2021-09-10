@@ -422,18 +422,39 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             if (eventsHistories) {
               eventsHistories = eventsHistories.map((eventHistory) => {
                 const history = eventHistory.toJSON();
+                history.online = history.online ? "Sim" : "Não";
                 history.__v = undefined;
                 history.updatedAt = toDateFormatted(
                   eventHistory.updatedAt,
                   false,
                   true
                 );
-                history.dates[0].start_date = toDateFormatted(
-                  eventHistory.dates[0].start_date
-                );
-                history.dates[0].end_date = toDateFormatted(
-                  eventHistory.dates[0].end_date
-                );
+                if (history.dates && history.dates.length) {
+                  history.dates = history.dates.map((historyDate) => {
+                    historyDate.infos = `${toDateFormatted(
+                      historyDate.start_date
+                    )}, das ${transformDateToTime(
+                      historyDate.start_date
+                    )} às ${transformDateToTime(historyDate.end_date)}`;
+                    historyDate.start_date = undefined;
+                    historyDate.end_date = undefined;
+                    return historyDate;
+                  });
+                }
+                if (history.lecturers && history.lecturers.length) {
+                  history.lecturers = history.lecturers.map(
+                    (historyLecturer) => {
+                      historyLecturer.infos = `${
+                        historyLecturer.lecturer_id.name
+                      } | ${historyLecturer.lecturer_id.office} | ${
+                        historyLecturer.lecturer_id.lattes
+                      } | ${historyLecturer.type === "guest" ? "Sim" : "Não"}`;
+                      historyLecturer.type = undefined;
+                      historyLecturer.lecturer_id = undefined;
+                      return historyLecturer;
+                    }
+                  );
+                }
                 return history;
               });
               histories = eventsHistories;
