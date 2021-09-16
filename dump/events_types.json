@@ -1,4 +1,53 @@
-{"_id":{"$oid":"60f629f9551f062dc0a1e415"},"name":"Seminário","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6113045e95cf4203f8a2fbf3"},"name":"Palestra","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6113046595cf4203f8a2fbf4"},"name":"Visita Técnica","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6113046f95cf4203f8a2fbf5"},"name":"Semana Acadêmica","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "60f629f9551f062dc0a1e415"
+  },
+  "name": "Seminário",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6113045e95cf4203f8a2fbf3"
+  },
+  "name": "Palestra",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6113046595cf4203f8a2fbf4"
+  },
+  "name": "Visita Técnica",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6113046f95cf4203f8a2fbf5"
+  },
+  "name": "Semana Acadêmica",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-16T21:50:12.097Z"
+  },
+  "__v": 0
+}]

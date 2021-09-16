@@ -1,8 +1,41 @@
-{"_id":{"$oid":"60f62a38551f062dc0a1e41a"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 1","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"Disciplina de teste 05","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"Curso de teste 03","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"78"},"online":null,"link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberDouble":"500.72"},"total_amount":{"$numberDouble":"1250.69"},"status":"created","createdAt":{"$date":{"$numberLong":"1626745400787"}},"updatedAt":{"$date":{"$numberLong":"1630026812081"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6124160bfa192b3d949b1bbf"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 2","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"revision","createdAt":{"$date":{"$numberLong":"1629754891112"}},"updatedAt":{"$date":{"$numberLong":"1629764598006"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6124189ef3e36759b83e0953"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 3","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"correct","createdAt":{"$date":{"$numberLong":"1629755550172"}},"updatedAt":{"$date":{"$numberLong":"1629755550172"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"612418a98eac0741783258d2"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 4","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"refused","createdAt":{"$date":{"$numberLong":"1629755561378"}},"updatedAt":{"$date":{"$numberLong":"1629755561378"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"612418b27e508362f8daa6f6"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 5","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"approved","createdAt":{"$date":{"$numberLong":"1629755570799"}},"updatedAt":{"$date":{"$numberLong":"1629755570799"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"612418c231a1ef5238d67443"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 6","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"finished","createdAt":{"$date":{"$numberLong":"1629755586431"}},"updatedAt":{"$date":{"$numberLong":"1629755586431"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"61243bd757812e54ac584d6f"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"61280f0b5d97d14be0456a35"},"name":"Meu evento 7 (não pode aparecer para o usuário)","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"created","createdAt":{"$date":{"$numberLong":"1629764567221"}},"updatedAt":{"$date":{"$numberLong":"1629764567221"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"61280c59e22ce438a85cd6c6"},"event_type_id":{"$oid":"60f629f9551f062dc0a1e415"},"user_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"name":"Meu evento 8","category_id":{"$oid":"60f62a2a551f062dc0a1e419"},"category_second_field_value":"","coverage_id":{"$oid":"60a8630f0c4bb24a34866d8a"},"coverage_second_field_value":"","workload":{"$numberDouble":"2.5"},"audience_estimate":{"$numberInt":"100"},"online":"0","link":"https://www.faculdademurialdo.com.br","place":"Faculdade murialdo","ticket":"R$50","objective":"Objetivos","reason":"Justificativas","schedule":"Cronograma","details":"Detalhes","resources":"Recursos","receipt_amount":{"$numberInt":"500"},"total_amount":{"$numberInt":"1250"},"status":"created","createdAt":{"$date":{"$numberLong":"1630014553426"}},"updatedAt":{"$date":{"$numberLong":"1630015279190"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "613009aebef41f263810499b"
+  },
+  "user_id": {
+    "$oid": "6126a0d03c810a5b4cefa94c"
+  },
+  "name": "Meu evento 152c",
+  "event_type_id": {
+    "$oid": "60f629f9551f062dc0a1e415"
+  },
+  "category_id": {
+    "$oid": "60f62a2a551f062dc0a1e419"
+  },
+  "category_second_field_value": "Disciplina de teste 05",
+  "coverage_id": {
+    "$oid": "60a8630f0c4bb24a34866d8a"
+  },
+  "coverage_second_field_value": "Curso de teste 03",
+  "workload": 2.5,
+  "place": "Faculdade murialdo",
+  "audience_estimate": 78,
+  "online": true,
+  "link": "https://www.faculdademurialdo.com.br",
+  "ticket": "R$50",
+  "objective": "Objetivos",
+  "reason": "Justificativas",
+  "schedule": "Cronograma",
+  "details": "Detalhes",
+  "resources": "Recursos",
+  "receipt_amount": 570.2,
+  "total_amount": 1950.92,
+  "status": "revision",
+  "createdAt": {
+    "$date": "2021-09-01T23:15:58.406Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:02.955Z"
+  },
+  "__v": 0
+}]

@@ -1,2 +1,41 @@
-{"_id":{"$oid":"6126a0d03c810a5b4cefa94c"},"accountConfirmation":true,"resetPass":false,"status":"1","name":"Rodrigo Pauletti","email":"john@doe.com","password":"$2a$10$.RAlGPpI68fAh5um7xTflOb0qtj.LZzWpIesov1morTna4SqL3j9y","user_type_id":{"$oid":"61243b15c31cf450c874def6"},"createdAt":{"$date":{"$numberLong":"1629921488503"}},"updatedAt":{"$date":{"$numberLong":"1629921491279"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"61280f0b5d97d14be0456a35"},"accountConfirmation":true,"resetPass":false,"status":"1","name":"Rodrigo Pauletti (proponente)","email":"rodrigo.proponente@famur.com.br","password":"$2a$10$.RAlGPpI68fAh5um7xTflOb0qtj.LZzWpIesov1morTna4SqL3j9y","user_type_id":{"$oid":"60a8607b5ba30e2924e0801a"},"createdAt":{"$date":{"$numberLong":"1629921488503"}},"updatedAt":{"$date":{"$numberLong":"1629921491279"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "6126a0d03c810a5b4cefa94c"
+  },
+  "accountConfirmation": true,
+  "resetPass": false,
+  "status": "1",
+  "name": "Rodrigo Pauletti",
+  "email": "john@doe.com",
+  "password": "$2a$10$.RAlGPpI68fAh5um7xTflOb0qtj.LZzWpIesov1morTna4SqL3j9y",
+  "user_type_id": {
+    "$oid": "61243b15c31cf450c874def6"
+  },
+  "createdAt": {
+    "$date": "2021-08-25T19:58:08.503Z"
+  },
+  "updatedAt": {
+    "$date": "2021-08-25T19:58:11.279Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61280f0b5d97d14be0456a35"
+  },
+  "accountConfirmation": true,
+  "resetPass": false,
+  "status": "1",
+  "name": "Rodrigo Pauletti (proponente)",
+  "email": "rodrigo.proponente@famur.com.br",
+  "password": "$2a$10$.RAlGPpI68fAh5um7xTflOb0qtj.LZzWpIesov1morTna4SqL3j9y",
+  "user_type_id": {
+    "$oid": "60a8607b5ba30e2924e0801a"
+  },
+  "createdAt": {
+    "$date": "2021-08-25T19:58:08.503Z"
+  },
+  "updatedAt": {
+    "$date": "2021-08-25T19:58:11.279Z"
+  },
+  "__v": 0
+}]

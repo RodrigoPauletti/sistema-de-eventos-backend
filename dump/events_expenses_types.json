@@ -1,3 +1,40 @@
-{"_id":{"$oid":"6113056495cf4203f8a2fbf6"},"name":"Transporte","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6113056a95cf4203f8a2fbf7"},"name":"Materiais","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"6113056e95cf4203f8a2fbf8"},"name":"Brindes","status":"1","createdAt":{"$date":{"$numberLong":"1626745337632"}},"updatedAt":{"$date":{"$numberLong":"1626745337632"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "6113056495cf4203f8a2fbf6"
+  },
+  "name": "Seminário",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-16T21:52:09.760Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6113056a95cf4203f8a2fbf7"
+  },
+  "name": "Materiais",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6113056e95cf4203f8a2fbf8"
+  },
+  "name": "Brindes",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+}]

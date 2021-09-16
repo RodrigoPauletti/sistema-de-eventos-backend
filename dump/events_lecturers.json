@@ -1,2 +1,649 @@
-{"_id":{"$oid":"61088891c93c5a41f4a90085"},"event_id":{"$oid":"60f62a38551f062dc0a1e41a"},"lecturer_id":{"$oid":"611b06c11e73623a74b37287"},"type":"lecturer","createdAt":{"$date":{"$numberLong":"1627949201571"}},"updatedAt":{"$date":{"$numberLong":"1627949201571"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"611b084329bed44e1c73e9a9"},"event_id":{"$oid":"60f62a38551f062dc0a1e41a"},"lecturer_id":{"$oid":"611b085129bed44e1c73e9aa"},"type":"guest","createdAt":{"$date":{"$numberLong":"1627949201571"}},"updatedAt":{"$date":{"$numberLong":"1627949201571"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "613009b4bef41f26381049b5"
+  },
+  "event_id": {
+    "$oid": "613009b4bef41f26381049a7"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:16:04.425Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:16:04.425Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "613009b4bef41f26381049b6"
+  },
+  "event_id": {
+    "$oid": "613009b4bef41f26381049a7"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:16:04.426Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:16:04.426Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c58bef41f26381049c9"
+  },
+  "event_id": {
+    "$oid": "61300c58bef41f26381049bb"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:20.776Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:20.776Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c58bef41f26381049cd"
+  },
+  "event_id": {
+    "$oid": "61300c58bef41f26381049bb"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:20.788Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:20.788Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c5dbef41f26381049dd"
+  },
+  "event_id": {
+    "$oid": "61300c5cbef41f26381049cf"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:25.069Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:25.069Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c5dbef41f26381049de"
+  },
+  "event_id": {
+    "$oid": "61300c5cbef41f26381049cf"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:25.070Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:25.070Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c79cd334141e8a4ba2f"
+  },
+  "event_id": {
+    "$oid": "61300c79cd334141e8a4ba21"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:53.111Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:53.111Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c79cd334141e8a4ba31"
+  },
+  "event_id": {
+    "$oid": "61300c79cd334141e8a4ba21"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:53.263Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:53.263Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7acd334141e8a4ba43"
+  },
+  "event_id": {
+    "$oid": "61300c7acd334141e8a4ba35"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:54.937Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:54.937Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7acd334141e8a4ba44"
+  },
+  "event_id": {
+    "$oid": "61300c7acd334141e8a4ba35"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:54.939Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:54.939Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7bcd334141e8a4ba57"
+  },
+  "event_id": {
+    "$oid": "61300c7bcd334141e8a4ba49"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:55.643Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:55.643Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7bcd334141e8a4ba58"
+  },
+  "event_id": {
+    "$oid": "61300c7bcd334141e8a4ba49"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:27:55.644Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:55.644Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e0807149b3ec0a8c711"
+  },
+  "event_id": {
+    "$oid": "61300e0807149b3ec0a8c702"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:34:32.464Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:32.464Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e0807149b3ec0a8c712"
+  },
+  "event_id": {
+    "$oid": "61300e0807149b3ec0a8c702"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:34:32.466Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:32.466Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e1d07149b3ec0a8c726"
+  },
+  "event_id": {
+    "$oid": "61300e1d07149b3ec0a8c716"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:34:53.873Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:53.873Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e1d07149b3ec0a8c727"
+  },
+  "event_id": {
+    "$oid": "61300e1d07149b3ec0a8c716"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:34:53.877Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:53.877Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300ee58ccc6b4174692fc0"
+  },
+  "event_id": {
+    "$oid": "61300ee58ccc6b4174692fb2"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-01T23:38:13.688Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:38:13.688Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300ee58ccc6b4174692fc1"
+  },
+  "event_id": {
+    "$oid": "61300ee58ccc6b4174692fb2"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-01T23:38:13.689Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:38:13.689Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e2b8ccc6b4174692fd4"
+  },
+  "event_id": {
+    "$oid": "61301e2b8ccc6b4174692fc6"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:23.724Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:23.724Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e2b8ccc6b4174692fd5"
+  },
+  "event_id": {
+    "$oid": "61301e2b8ccc6b4174692fc6"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:23.725Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:23.725Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e308ccc6b4174692fe8"
+  },
+  "event_id": {
+    "$oid": "61301e308ccc6b4174692fda"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:28.487Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:28.487Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e308ccc6b4174692fe9"
+  },
+  "event_id": {
+    "$oid": "61301e308ccc6b4174692fda"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:28.489Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:28.489Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e338ccc6b4174692ffc"
+  },
+  "event_id": {
+    "$oid": "61301e328ccc6b4174692fee"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:31.006Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:31.006Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e338ccc6b4174692ffd"
+  },
+  "event_id": {
+    "$oid": "61301e328ccc6b4174692fee"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-02T00:43:31.008Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:31.008Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e8facc48f2954311eab"
+  },
+  "event_id": {
+    "$oid": "61301e8facc48f2954311e9d"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-02T00:45:03.900Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:45:03.900Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e8facc48f2954311eac"
+  },
+  "event_id": {
+    "$oid": "61301e8facc48f2954311e9d"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-02T00:45:03.901Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:45:03.901Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6130205116dea640a453171e"
+  },
+  "event_id": {
+    "$oid": "6130205116dea640a4531710"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-02T00:52:33.962Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:52:33.962Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6130205116dea640a453171f"
+  },
+  "event_id": {
+    "$oid": "6130205116dea640a4531710"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-02T00:52:33.964Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:52:33.964Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392a3b4f14ad5f448ee985"
+  },
+  "event_id": {
+    "$oid": "61392a3b4f14ad5f448ee976"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-08T21:25:15.312Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:25:15.312Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392a3b4f14ad5f448ee988"
+  },
+  "event_id": {
+    "$oid": "61392a3b4f14ad5f448ee976"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-08T21:25:15.324Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:25:15.324Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392ad64f14ad5f448ee998"
+  },
+  "event_id": {
+    "$oid": "61392ad54f14ad5f448ee98a"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-08T21:27:50.045Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:27:50.045Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392ad64f14ad5f448ee999"
+  },
+  "event_id": {
+    "$oid": "61392ad54f14ad5f448ee98a"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-08T21:27:50.047Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:27:50.047Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9a6"
+  },
+  "event_id": {
+    "$oid": "613009aebef41f263810499b"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.027Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.027Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9ab"
+  },
+  "event_id": {
+    "$oid": "613009aebef41f263810499b"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.045Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.045Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9ac"
+  },
+  "event_id": {
+    "$oid": "61392b1e4f14ad5f448ee99e"
+  },
+  "lecturer_id": {
+    "$oid": "611b06c11e73623a74b37287"
+  },
+  "type": "lecturer",
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.050Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.050Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9ad"
+  },
+  "event_id": {
+    "$oid": "61392b1e4f14ad5f448ee99e"
+  },
+  "lecturer_id": {
+    "$oid": "611b085129bed44e1c73e9aa"
+  },
+  "type": "guest",
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.052Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.052Z"
+  },
+  "__v": 0
+}]

@@ -1,2 +1,685 @@
-{"_id":{"$oid":"61088891c93c5a41f4a90085"},"event_id":{"$oid":"60f62a38551f062dc0a1e41a"},"organizer_id":{"$oid":"611c5188e84f213730bbe7c1"},"office":"Monitor geral","workload":{"$numberDecimal":"5.2"},"createdAt":{"$date":{"$numberLong":"1627949201571"}},"updatedAt":{"$date":{"$numberLong":"1627949201571"}},"__v":{"$numberInt":"0"}}
-{"_id":{"$oid":"611c5205ed50624ef4539562"},"event_id":{"$oid":"60f62a38551f062dc0a1e41a"},"organizer_id":{"$oid":"611c51dfed50624ef4539561"},"office":"Monitor auxiliar","workload":{"$numberDecimal":"2.4"},"createdAt":{"$date":{"$numberLong":"1627949201571"}},"updatedAt":{"$date":{"$numberLong":"1627949201571"}},"__v":{"$numberInt":"0"}}
+[{
+  "_id": {
+    "$oid": "613009b4bef41f26381049b7"
+  },
+  "event_id": {
+    "$oid": "613009b4bef41f26381049a7"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:16:04.430Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:16:04.430Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "613009b4bef41f26381049b8"
+  },
+  "event_id": {
+    "$oid": "613009b4bef41f26381049a7"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:16:04.435Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:16:04.435Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c58bef41f26381049ca"
+  },
+  "event_id": {
+    "$oid": "61300c58bef41f26381049bb"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:20.778Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:20.778Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c58bef41f26381049cb"
+  },
+  "event_id": {
+    "$oid": "61300c58bef41f26381049bb"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:20.780Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:20.780Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c5dbef41f26381049df"
+  },
+  "event_id": {
+    "$oid": "61300c5cbef41f26381049cf"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:25.071Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:25.071Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c5dbef41f26381049e0"
+  },
+  "event_id": {
+    "$oid": "61300c5cbef41f26381049cf"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:25.072Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:25.072Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c79cd334141e8a4ba30"
+  },
+  "event_id": {
+    "$oid": "61300c79cd334141e8a4ba21"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:53.163Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:53.163Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c79cd334141e8a4ba32"
+  },
+  "event_id": {
+    "$oid": "61300c79cd334141e8a4ba21"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:53.275Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:53.275Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7acd334141e8a4ba45"
+  },
+  "event_id": {
+    "$oid": "61300c7acd334141e8a4ba35"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:54.940Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:54.940Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7acd334141e8a4ba46"
+  },
+  "event_id": {
+    "$oid": "61300c7acd334141e8a4ba35"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:54.944Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:54.944Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7bcd334141e8a4ba59"
+  },
+  "event_id": {
+    "$oid": "61300c7bcd334141e8a4ba49"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:55.647Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:55.647Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300c7bcd334141e8a4ba5a"
+  },
+  "event_id": {
+    "$oid": "61300c7bcd334141e8a4ba49"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:27:55.648Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:27:55.648Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e0807149b3ec0a8c710"
+  },
+  "event_id": {
+    "$oid": "61300e0807149b3ec0a8c702"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:34:32.461Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:32.461Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e0807149b3ec0a8c713"
+  },
+  "event_id": {
+    "$oid": "61300e0807149b3ec0a8c702"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:34:32.476Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:32.476Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e1d07149b3ec0a8c724"
+  },
+  "event_id": {
+    "$oid": "61300e1d07149b3ec0a8c716"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:34:53.869Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:53.869Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300e1d07149b3ec0a8c728"
+  },
+  "event_id": {
+    "$oid": "61300e1d07149b3ec0a8c716"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:34:53.878Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:34:53.878Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300ee58ccc6b4174692fc2"
+  },
+  "event_id": {
+    "$oid": "61300ee58ccc6b4174692fb2"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-01T23:38:13.692Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:38:13.692Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61300ee58ccc6b4174692fc3"
+  },
+  "event_id": {
+    "$oid": "61300ee58ccc6b4174692fb2"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-01T23:38:13.693Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-01T23:38:13.693Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e2b8ccc6b4174692fd6"
+  },
+  "event_id": {
+    "$oid": "61301e2b8ccc6b4174692fc6"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:23.726Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:23.726Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e2b8ccc6b4174692fd7"
+  },
+  "event_id": {
+    "$oid": "61301e2b8ccc6b4174692fc6"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:23.727Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:23.727Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e308ccc6b4174692fea"
+  },
+  "event_id": {
+    "$oid": "61301e308ccc6b4174692fda"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:28.492Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:28.492Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e308ccc6b4174692feb"
+  },
+  "event_id": {
+    "$oid": "61301e308ccc6b4174692fda"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:28.494Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:28.494Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e338ccc6b4174692ffe"
+  },
+  "event_id": {
+    "$oid": "61301e328ccc6b4174692fee"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:31.012Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:31.012Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e338ccc6b4174692fff"
+  },
+  "event_id": {
+    "$oid": "61301e328ccc6b4174692fee"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-02T00:43:31.014Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:43:31.014Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e8facc48f2954311ead"
+  },
+  "event_id": {
+    "$oid": "61301e8facc48f2954311e9d"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-02T00:45:03.902Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:45:03.902Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61301e8facc48f2954311eae"
+  },
+  "event_id": {
+    "$oid": "61301e8facc48f2954311e9d"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-02T00:45:03.905Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:45:03.905Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6130205116dea640a4531720"
+  },
+  "event_id": {
+    "$oid": "6130205116dea640a4531710"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-02T00:52:33.965Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:52:33.965Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6130205116dea640a4531721"
+  },
+  "event_id": {
+    "$oid": "6130205116dea640a4531710"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-02T00:52:33.966Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-02T00:52:33.966Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392a3b4f14ad5f448ee984"
+  },
+  "event_id": {
+    "$oid": "61392a3b4f14ad5f448ee976"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-08T21:25:15.310Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:25:15.310Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392a3b4f14ad5f448ee989"
+  },
+  "event_id": {
+    "$oid": "61392a3b4f14ad5f448ee976"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-08T21:25:15.332Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:25:15.332Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392ad64f14ad5f448ee99b"
+  },
+  "event_id": {
+    "$oid": "61392ad54f14ad5f448ee98a"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-08T21:27:50.054Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:27:50.054Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392ad64f14ad5f448ee99c"
+  },
+  "event_id": {
+    "$oid": "61392ad54f14ad5f448ee98a"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-08T21:27:50.057Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:27:50.057Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9a7"
+  },
+  "event_id": {
+    "$oid": "613009aebef41f263810499b"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.029Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.029Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9a8"
+  },
+  "event_id": {
+    "$oid": "613009aebef41f263810499b"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.031Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.031Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9ae"
+  },
+  "event_id": {
+    "$oid": "61392b1e4f14ad5f448ee99e"
+  },
+  "organizer_id": {
+    "$oid": "611c5188e84f213730bbe7c1"
+  },
+  "office": "Monitor geral",
+  "workload": 5.2,
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.054Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.054Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "61392b1f4f14ad5f448ee9af"
+  },
+  "event_id": {
+    "$oid": "61392b1e4f14ad5f448ee99e"
+  },
+  "organizer_id": {
+    "$oid": "611c51dfed50624ef4539561"
+  },
+  "office": "Monitor auxiliar",
+  "workload": 2.4,
+  "createdAt": {
+    "$date": "2021-09-08T21:29:03.058Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-08T21:29:03.058Z"
+  },
+  "__v": 0
+}]
