@@ -61,17 +61,26 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { lecturerID, name, office, lattes, status } = req.body;
+router.post("/edit/:lecturerID", reqAuth, function (req, res) {
+  const { lecturerID } = req.params;
+  const { name, office, lattes, status } = req.body;
 
   Lecturer.find({ _id: lecturerID }).then((lecturer) => {
-    if (lecturer.length == 1) {
+    if (lecturer.length === 1) {
       const query = { _id: lecturer[0]._id };
       const newvalues = {
         $set: { name, office, lattes, status },
       };
       Lecturer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res.status(500).send({
+              success: false,
+              message: "O palestrante já existe!",
+            });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",

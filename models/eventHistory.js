@@ -55,9 +55,12 @@ const EventHistorySchema = new mongoose.Schema(
     },
     link: {
       type: String,
-      required: function () {
-        return this.online;
-      },
+      required: [
+        function () {
+          return this.online;
+        },
+        'O campo "Link" do histórico é obrigatório quando o evento é online',
+      ],
     },
     place: {
       type: String,

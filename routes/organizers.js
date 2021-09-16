@@ -28,9 +28,9 @@ router.post("/allActivated", reqAuth, function (req, res) {
 });
 
 router.post("/create", (req, res) => {
-  const { name, identification, /* office, */ status } = req.body;
+  const { name, identification, status } = req.body;
 
-  const query = { name, identification, /* office, */ status };
+  const query = { name, identification, status };
   Organizer.create(query, function (err, organizer) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
@@ -61,17 +61,26 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { organizerID, name, identification, /* office, */ status } = req.body;
+router.post("/edit/:organizerID", reqAuth, function (req, res) {
+  const { organizerID } = req.params;
+  const { name, identification, status } = req.body;
 
   Organizer.find({ _id: organizerID }).then((organizer) => {
-    if (organizer.length == 1) {
+    if (organizer.length === 1) {
       const query = { _id: organizer[0]._id };
       const newvalues = {
-        $set: { name, identification, /* office, */ status },
+        $set: { name, identification, status },
       };
       Organizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res.status(500).send({
+              success: false,
+              message: "O organizador já existe!",
+            });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",

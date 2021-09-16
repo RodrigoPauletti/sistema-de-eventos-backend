@@ -4,86 +4,89 @@ const EventExpense = require("../models/eventExpense");
 const reqAuth = require("../config/safeRoutes").reqAuth;
 // route /admin/eventsExpenses/
 
-router.post("/all", reqAuth, function (req, res) {
-  EventExpense.find({}, function (err, eventsExpenses) {
-    if (err) {
-      return res.status(500).json({ success: false });
-    }
-    eventsExpenses = eventsExpenses.map(function (item) {
-      const x = item;
-      x.__v = undefined;
-      return x;
-    });
-    return res.json({ success: true, eventsExpenses });
-  });
-});
+// router.post("/all", reqAuth, function (req, res) {
+//   EventExpense.find({}, function (err, eventsExpenses) {
+//     if (err) {
+//       return res.status(500).json({ success: false });
+//     }
+//     eventsExpenses = eventsExpenses.map(function (item) {
+//       const x = item;
+//       x.__v = undefined;
+//       return x;
+//     });
+//     return res.json({ success: true, eventsExpenses });
+//   });
+// });
 
-router.post("/create", (req, res) => {
-  const { event_id, event_expense_type_id, provider, amount, comments } =
-    req.body;
+// router.post("/create", (req, res) => {
+//   const { event_id, event_expense_type_id, provider, amount, comments } =
+//     req.body;
 
-  const query = { event_id, event_expense_type_id, provider, amount, comments };
-  EventExpense.create(query, function (err, eventExpense) {
-    if (err) {
-      if (err.name === "MongoError" && err.code === 11000) {
-        // Duplicate name
-        return res.status(500).send({
-          success: false,
-          message: "A despesa de evento já existe!",
-        });
-      }
+//   const query = { event_id, event_expense_type_id, provider, amount, comments };
+//   EventExpense.create(query, function (err, eventExpense) {
+//     if (err) {
+//       if (err.name === "MongoError" && err.code === 11000) {
+//         // Duplicate name
+//         return res.status(500).send({
+//           success: false,
+//           message: "A despesa de evento já existe!",
+//         });
+//       }
 
-      const firstErrorKey = Object.keys(err.errors).shift();
-      if (firstErrorKey) {
-        return res.status(500).json({
-          success: false,
-          msg: err.errors[firstErrorKey].message,
-        });
-      }
+//       const firstErrorKey = Object.keys(err.errors).shift();
+//       if (firstErrorKey) {
+//         return res.status(500).json({
+//           success: false,
+//           msg: err.errors[firstErrorKey].message,
+//         });
+//       }
 
-      return res.status(500).send(err);
-    }
+//       return res.status(500).send(err);
+//     }
 
-    return res.json({
-      success: true,
-      organizerID: eventExpense._id,
-      msg: "Despesa de evento criada com sucesso",
-    });
-  });
-});
+//     return res.json({
+//       success: true,
+//       expenseID: eventExpense._id,
+//       msg: "Despesa de evento criada com sucesso",
+//     });
+//   });
+// });
 
-// TODO: Create get route
+// // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const {
-    organizerID,
-    event_id,
-    event_expense_type_id,
-    provider,
-    amount,
-    comments,
-  } = req.body;
+// router.post("/edit/:expenseID", reqAuth, function (req, res) {
+//   const { expenseID } = req.params;
+//   const { event_id, event_expense_type_id, provider, amount, comments } =
+//     req.body;
 
-  EventExpense.find({ _id: organizerID }).then((eventExpense) => {
-    if (eventExpense.length == 1) {
-      const query = { _id: eventExpense[0]._id };
-      const newvalues = {
-        $set: { event_id, event_expense_type_id, provider, amount, comments },
-      };
-      EventExpense.updateOne(query, newvalues, function (err, cb) {
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            msg: "Ocorreu um erro. Favor contatar o administrador",
-          });
-        }
-        return res.json({ success: true });
-      });
-    } else {
-      return res.status(500).json({ success: false });
-    }
-  });
-});
+//   EventExpense.find({ _id: expenseID }).then((eventExpense) => {
+//     if (eventExpense.length === 1) {
+//       const query = { _id: eventExpense[0]._id };
+//       const newvalues = {
+//         $set: { event_id, event_expense_type_id, provider, amount, comments },
+//       };
+//       EventExpense.updateOne(query, newvalues, function (err, cb) {
+//         if (err) {
+//           if (err.name === "MongoError" && err.code === 11000) {
+//             // Duplicate name
+//             return res.status(500).send({
+//               success: false,
+//               message: "A despesa de evento já existe!",
+//             });
+//           }
+
+//           return res.status(500).json({
+//             success: false,
+//             msg: "Ocorreu um erro. Favor contatar o administrador",
+//           });
+//         }
+//         return res.json({ success: true });
+//       });
+//     } else {
+//       return res.status(500).json({ success: false });
+//     }
+//   });
+// });
 
 // TODO: Create delete route
 

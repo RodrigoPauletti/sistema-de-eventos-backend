@@ -17,15 +17,15 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-const ActiveSession = require('../models/activeSession');
+const ActiveSession = require("../models/activeSession");
 
 const reqAuth = (req, res, next) => {
   const token = String(req.headers.authorization);
-  ActiveSession.find({token: token}, function(err, session) {
-    if (session.length == 1) {
+  ActiveSession.find({ token: token }, function (err, session) {
+    if (session.length === 1) {
       return next();
     } else {
-      return res.json({success: false, msg: 'User is not logged on'});
+      return res.json({ success: false, msg: "User is not logged on" });
     }
   });
 };

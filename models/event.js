@@ -53,9 +53,12 @@ const EventSchema = new mongoose.Schema(
     },
     link: {
       type: String,
-      required: function () {
-        return this.online;
-      },
+      required: [
+        function () {
+          return this.online;
+        },
+        'O campo "Link" é obrigatório quando o evento é online',
+      ],
     },
     place: {
       type: String,

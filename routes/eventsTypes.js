@@ -61,17 +61,25 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { eventTypeID, name, office, func, status } = req.body;
+router.post("/edit/:eventTypeID", reqAuth, function (req, res) {
+  const { eventTypeID } = req.params;
+  const { name, office, func, status } = req.body;
 
   EventType.find({ _id: eventTypeID }).then((eventType) => {
-    if (eventType.length == 1) {
+    if (eventType.length === 1) {
       const query = { _id: eventType[0]._id };
       const newvalues = {
         $set: { name, office, func, status },
       };
       EventType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res
+              .status(500)
+              .send({ success: false, message: "O tipo de evento já existe!" });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",

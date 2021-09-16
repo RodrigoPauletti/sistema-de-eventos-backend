@@ -47,11 +47,12 @@ router.post("/all", reqAuth, async function (req, res) {
   }
 });
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { userID, name, email } = req.body;
+router.post("/edit/:userID", reqAuth, function (req, res) {
+  const { userID } = req.params;
+  const { name, email } = req.body;
 
   User.find({ _id: userID }).then((user) => {
-    if (user.length == 1) {
+    if (user.length === 1) {
       const query = { _id: user[0]._id };
       const newvalues = { $set: { name, email } };
       User.updateOne(query, newvalues, function (err, cb) {
@@ -72,7 +73,7 @@ router.post("/edit", reqAuth, function (req, res) {
 router.post("/check/resetpass/:id", (req, res) => {
   const userID = req.params.id;
   User.find({ _id: userID }).then((user) => {
-    if (user.length == 1 && user[0].resetPass == true) {
+    if (user.length === 1 && user[0].resetPass == true) {
       return res.json({ success: true }); // reset password was made for this user
     } else {
       return res.status(500).json({ success: false });
@@ -295,6 +296,58 @@ router.post("/logout", reqAuth, function (req, res) {
       return res.status(500).json({ success: false });
     }
     return res.json({ success: true });
+  });
+});
+
+router.post("/create", async (req, res) => {
+  const { name, user_type_id, email, password } = req.body;
+
+  User.findOne({ email }).then((user) => {
+    if (user) {
+      return res.status(500).json({
+        success: false,
+        msg: "E-mail já existente",
+      });
+    } else if (password.length < 6) {
+      return res.status(500).json({
+        success: false,
+        msg: "A senha deve conter, no mínimo, 6 caracteres",
+      });
+    } else {
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(password, salt, null, (err, hash) => {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              msg: "Erro ao criptografar a senha do usuário.",
+            });
+          }
+          const query = { user_type_id, name, email, password: hash };
+          User.create(query, function (err, user) {
+            if (err) {
+              const firstErrorKey = Object.keys(err.errors).shift();
+              if (firstErrorKey) {
+                return res.status(500).json({
+                  success: false,
+                  msg: err.errors[firstErrorKey].message,
+                });
+              }
+
+              return res.status(500).json({
+                success: false,
+                msg: "Ocorreu um erro. Favor contatar o administrador",
+              });
+            }
+
+            return res.json({
+              success: true,
+              userID: user._id,
+              msg: "Usuário criado com sucesso",
+            });
+          });
+        });
+      });
+    }
   });
 });
 

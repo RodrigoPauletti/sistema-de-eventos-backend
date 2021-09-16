@@ -24,6 +24,14 @@ router.post("/create", (req, res) => {
   const query = { name, permission, status };
   UserType.create(query, function (err, userType) {
     if (err) {
+      if (err.name === "MongoError" && err.code === 11000) {
+        // Duplicate name
+        return res.status(500).send({
+          success: false,
+          message: "O tipo de usuário já existe!",
+        });
+      }
+
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
         return res.status(500).json({
@@ -47,15 +55,24 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { userTypeID, name, permission, status } = req.body;
+router.post("/edit/:userTypeID", reqAuth, function (req, res) {
+  const { userTypeID } = req.params;
+  const { name, permission, status } = req.body;
 
   UserType.find({ _id: userTypeID }).then((userType) => {
-    if (userType.length == 1) {
+    if (userType.length === 1) {
       const query = { _id: userType[0]._id };
       const newvalues = { $set: { name, permission, status } };
       UserType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res.status(500).send({
+              success: false,
+              message: "O tipo de usuário já existe!",
+            });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",

@@ -54,7 +54,7 @@ router.post("/create", (req, res) => {
 
     return res.json({
       success: true,
-      organizerID: eventExpenseType._id,
+      expenseTypeID: eventExpenseType._id,
       msg: "Tipo de despesa de evento criado com sucesso",
     });
   });
@@ -62,17 +62,26 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const { organizerID, name, status } = req.body;
+router.post("/edit/:expenseTypeID", reqAuth, function (req, res) {
+  const { expenseTypeID } = req.params;
+  const { name, status } = req.body;
 
-  EventExpenseType.find({ _id: organizerID }).then((eventExpenseType) => {
-    if (eventExpenseType.length == 1) {
+  EventExpenseType.find({ _id: expenseTypeID }).then((eventExpenseType) => {
+    if (eventExpenseType.length === 1) {
       const query = { _id: eventExpenseType[0]._id };
       const newvalues = {
         $set: { name, status },
       };
       EventExpenseType.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res.status(500).send({
+              success: false,
+              message: "O tipo de despesa de evento já existe!",
+            });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",

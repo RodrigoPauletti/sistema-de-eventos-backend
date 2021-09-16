@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
     user_type_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserType",
-      required: true,
+      required: '"Tipo de usuário" é obrigatório',
     },
     name: {
       type: String,

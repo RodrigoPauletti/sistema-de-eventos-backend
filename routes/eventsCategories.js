@@ -33,6 +33,14 @@ router.post("/create", (req, res) => {
   const query = { name, secondary_field, secondary_field_name, status };
   EventCategory.create(query, function (err, eventCategory) {
     if (err) {
+      if (err.name === "MongoError" && err.code === 11000) {
+        // Duplicate name
+        return res.status(500).send({
+          success: false,
+          message: "A categoria de evento já existe!",
+        });
+      }
+
       const firstErrorKey = Object.keys(err.errors).shift();
       if (firstErrorKey) {
         return res.status(500).json({
@@ -56,23 +64,26 @@ router.post("/create", (req, res) => {
 
 // TODO: Create get route
 
-router.post("/edit", reqAuth, function (req, res) {
-  const {
-    eventCategoryID,
-    name,
-    secondary_field,
-    secondary_field_name,
-    status,
-  } = req.body;
+router.post("/edit/:eventCategoryID", reqAuth, function (req, res) {
+  const { eventCategoryID } = req.params;
+  const { name, secondary_field, secondary_field_name, status } = req.body;
 
   EventCategory.find({ _id: eventCategoryID }).then((eventCategory) => {
-    if (eventCategory.length == 1) {
+    if (eventCategory.length === 1) {
       const query = { _id: eventCategory[0]._id };
       const newvalues = {
         $set: { name, secondary_field, secondary_field_name, status },
       };
       EventCategory.updateOne(query, newvalues, function (err, cb) {
         if (err) {
+          if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate name
+            return res.status(500).send({
+              success: false,
+              message: "A categoria de evento já existe!",
+            });
+          }
+
           return res.status(500).json({
             success: false,
             msg: "Ocorreu um erro. Favor contatar o administrador",
