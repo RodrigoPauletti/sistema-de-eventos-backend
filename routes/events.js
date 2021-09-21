@@ -386,6 +386,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             const exp = expense.toJSON();
             exp.amount = exp.amount.toFixed(2);
             exp.event_id = undefined;
+            exp.file_uploaded = !!exp.file;
             return exp;
           });
         }
