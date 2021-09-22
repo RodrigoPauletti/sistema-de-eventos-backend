@@ -68,6 +68,10 @@ if (process.env.NODE_ENV === "PROD") {
   });
 }
 
+app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
+
+app.use("/api/upload", require("./routes/upload"));
+
 // Initialize routes middleware
 app.use("/api/users", require("./routes/users"));
 app.use("/api/usersTypes", require("./routes/usersTypes"));

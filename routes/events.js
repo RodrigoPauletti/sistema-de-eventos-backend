@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+// const multer = require("multer");
+// const multerConfig = require("../config/multer");
+// const upload = multer(multerConfig);
+const http = require("http");
 
 const Event = require("../models/event");
 const EventHistory = require("../models/eventHistory");
@@ -134,7 +138,7 @@ router.post("/all", reqAuth, async function (req, res) {
   }
 });
 
-router.post("/create", async (req, res) => {
+router.post("/create", reqAuth, async (req, res) => {
   const {
     name,
     event_type_id,
@@ -1040,6 +1044,9 @@ function relateExpensesWithEvent(expenses = [], eventID = null) {
           };
 
           await EventExpense.deleteMany({ event_id: eventID });
+
+          // TODO: Send expenses' files to upload router
+          // http.post??
 
           // Relate Expense to event
           await EventExpense.create(eventExpenseQuery);
