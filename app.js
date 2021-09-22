@@ -22,14 +22,14 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const mongoose = require("mongoose");
 const compression = require("compression");
-const https = require("https");
+// const https = require("https");
 const http = require("http");
-const fs = require("fs");
+// const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 const db = require("./config/keys").mongoURI;
-const CronJob = require("cron").CronJob;
-const crons = require("./config/crons");
+// const CronJob = require("cron").CronJob;
+// const crons = require("./config/crons");
 
 require("dotenv").config();
 
@@ -57,8 +57,8 @@ app.use(cors());
 
 // Express body parser
 app.use("/public", express.static("public"));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: "25mb" }));
+app.use(bodyParser.json({ limit: "25mb" }));
 
 // REACT BUILD for production
 if (process.env.NODE_ENV === "PROD") {
@@ -85,16 +85,11 @@ app.use("/api/eventsCategories", require("./routes/eventsCategories"));
 app.use("/api/eventsTypes", require("./routes/eventsTypes"));
 app.use("/api/eventsExpensesTypes", require("./routes/eventsExpensesTypes"));
 
-app.use("/api/eventsDates", require("./routes/eventsDates"));
-app.use("/api/eventsExpenses", require("./routes/eventsExpenses"));
-app.use("/api/eventsLecturers", require("./routes/eventsLecturers"));
-app.use("/api/eventsOrganizers", require("./routes/eventsOrganizers"));
-
 // run at 3:10 AM -> delete old tokens
-const tokensCleanUp = new CronJob("10 3 * * *", function () {
-  crons.tokensCleanUp();
-});
-tokensCleanUp.start();
+// const tokensCleanUp = new CronJob("10 3 * * *", function () {
+//   crons.tokensCleanUp();
+// });
+// tokensCleanUp.start();
 
 const PORT = process.env.PORT;
 
@@ -121,15 +116,15 @@ http.createServer({}, app).listen(PORT, function () {
 //   res.redirect('https://' + req.headers.host + req.url);
 // });
 
-/**
- * @param {int} req req.
- * @param {int} res res.
- * @param {int} next next.
- * @return {void} none.
- */
-function requireHTTPS(req, res, next) {
-  if (!req.secure) {
-    return res.redirect("https://" + req.get("host") + req.url);
-  }
-  next();
-}
+// /**
+//  * @param {int} req req.
+//  * @param {int} res res.
+//  * @param {int} next next.
+//  * @return {void} none.
+//  */
+// function requireHTTPS(req, res, next) {
+//   if (!req.secure) {
+//     return res.redirect("https://" + req.get("host") + req.url);
+//   }
+//   next();
+// }

@@ -25,7 +25,7 @@ const reqAuth = (req, res, next) => {
     if (session.length === 1) {
       return next();
     } else {
-      return res.json({ success: false, msg: "User is not logged on" });
+      return res.json({ success: false, msg: "Usuário não está logado" });
     }
   });
 };
