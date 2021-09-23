@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-// const multer = require("multer");
-// const multerConfig = require("../config/multer");
-// const upload = multer(multerConfig);
-const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
 
 const Event = require("../models/event");
 const EventHistory = require("../models/eventHistory");
@@ -250,6 +249,7 @@ router.post("/create", reqAuth, async (req, res) => {
       }
 
       eventID = event._id;
+      event.event_id = eventID;
 
       addEventHistory(event);
 
@@ -723,6 +723,9 @@ router.delete("/:eventID", reqAuth, function (req, res) {
         });
       }
 
+      // Delete event's histories
+      await EventHistory.deleteMany({ event_id: eventID });
+
       // Delete event's dates
       await EventDate.deleteMany({ event_id: eventID });
 
@@ -732,12 +735,38 @@ router.delete("/:eventID", reqAuth, function (req, res) {
       // Delete event's organizers
       await EventOrganizer.deleteMany({ event_id: eventID });
 
+      // Delete event's expense's files
+      EventExpense.find({ event_id: eventID }).then((eventExpenses, index) => {
+        if (eventExpenses) {
+          eventExpenses.forEach((eventExpense) => {
+            const expenseFile = eventExpense.file;
+            // Delete event's expense's file
+            if (expenseFile) {
+              const fileWithPath = `${path.resolve(
+                __dirname,
+                "..",
+                "tmp",
+                "uploads"
+              )}/${expenseFile}`;
+
+              // Verify if file exists
+              fs.access(fileWithPath, fs.F_OK, (err) => {
+                if (!err) {
+                  fs.unlink(fileWithPath, (err) => {});
+                }
+              });
+            }
+          });
+        }
+      });
+
       // Delete event's expenses
       await EventExpense.deleteMany({ event_id: eventID });
 
       return event
         .deleteOne()
         .then(() => {
+          console.log(`Event ${eventID} deleted!`);
           return res.json({ success: true });
         })
         .catch(() => {
@@ -1021,12 +1050,14 @@ function relateOrganizersWithEvent(organizers = [], eventID = null) {
 function relateExpensesWithEvent(expenses = [], eventID = null) {
   if (expenses && expenses.length && eventID) {
     if (expenses && expenses.length) {
-      expenses.forEach(async (expense) => {
+      expenses.forEach(async (expense, index) => {
         const {
           event_expense_type_id: { _id: event_expense_type_id },
           provider,
           amount,
           file,
+          file_uploaded,
+          file_base64,
           comments,
         } = expense;
 
@@ -1045,11 +1076,53 @@ function relateExpensesWithEvent(expenses = [], eventID = null) {
 
           await EventExpense.deleteMany({ event_id: eventID });
 
-          // TODO: Send expenses' files to upload router
-          // http.post??
+          if (!file_uploaded) {
+            crypto.randomBytes(16, (err, hash) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  msg: err,
+                });
+              }
+
+              const fileSplitted = file.split(".");
+              const fileExtension = fileSplitted.pop();
+              const fileNameStarted = slugify(fileSplitted.join("."));
+              const fileName = `${hash.toString(
+                "hex"
+              )}-${fileNameStarted}.${fileExtension}`;
+              eventExpenseQuery.file = fileName;
+
+              fs.writeFile(
+                `${path.resolve(
+                  __dirname,
+                  "..",
+                  "tmp",
+                  "uploads"
+                )}/${fileName}`,
+                file_base64,
+                "base64",
+                async (err, data) => {
+                  if (err) {
+                    return res.status(500).json({
+                      success: false,
+                      msg:
+                        err._message ||
+                        `Erro ao fazer upload do arquivo da despesa #${
+                          index + 1
+                        }`,
+                    });
+                  }
+                  await EventExpense.create(eventExpenseQuery);
+                }
+              );
+            });
+          } else {
+            await EventExpense.create(eventExpenseQuery);
+          }
 
           // Relate Expense to event
-          await EventExpense.create(eventExpenseQuery);
+          // await EventExpense.create(eventExpenseQuery);
           // .catch((err) => {
           //   return res.status(500).json({
           //     success: false,
@@ -1069,4 +1142,30 @@ function formatAmount(amount) {
     return `R$ ${parseFloat(amount).toFixed(2).replace(".", ",")}`;
   }
   return null;
+}
+
+function slugify(str) {
+  str = str.replace(/^\s+|\s+$/g, "");
+
+  // Make the string lowercase
+  str = str.toLowerCase();
+
+  // Remove accents, swap ñ for n, etc
+  var from =
+    "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆÍÌÎÏŇÑÓÖÒÔÕØŘŔŠŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇíìîïňñóöòôõøðřŕšťúůüùûýÿžþÞĐđßÆa·/_,:;";
+  var to =
+    "AAAAAACCCDEEEEEEEEIIIINNOOOOOORRSTUUUUUYYZaaaaaacccdeeeeeeeeiiiinnooooooorrstuuuuuyyzbBDdBAa------";
+  for (var i = 0, l = from.length; i < l; i++) {
+    str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
+  }
+
+  // Remove invalid chars
+  str = str
+    .replace(/[^a-z0-9 -]/g, "")
+    // Collapse whitespace and replace by -
+    .replace(/\s+/g, "-")
+    // Collapse dashes
+    .replace(/-+/g, "-");
+
+  return str;
 }
