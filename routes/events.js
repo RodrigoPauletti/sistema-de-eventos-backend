@@ -251,7 +251,7 @@ router.post("/create", reqAuth, async (req, res) => {
       eventID = event._id;
       event.event_id = eventID;
 
-      addEventHistory(event);
+      // addEventHistory(event);
 
       // Relate each date to event
       relateDatesWithEvent(dates, eventID);
@@ -263,7 +263,7 @@ router.post("/create", reqAuth, async (req, res) => {
       relateOrganizersWithEvent(organizers, eventID);
 
       // Relate each expense to event
-      relateExpensesWithEvent(expenses, eventID);
+      relateExpensesWithEvent(expenses, eventID, true);
 
       return res.json({
         success: true,
@@ -315,7 +315,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         },
         {
           path: "expenses",
-          select: "expense_id provider amount file comments",
+          select: "expense_id provider amount file filename comments",
           populate: { path: "event_expense_type_id", select: "name" },
         },
       ])
@@ -654,15 +654,15 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           });
         }
 
-        addEventHistory({
-          ...event,
-          event_id: eventID,
-          user_id,
-          dates,
-          lecturers,
-          organizers,
-          expenses,
-        });
+        // addEventHistory({
+        //   ...event,
+        //   event_id: eventID,
+        //   user_id,
+        //   dates,
+        //   lecturers,
+        //   organizers,
+        //   expenses,
+        // });
 
         // Relate each date to event
         relateDatesWithEvent(dates, eventID);
@@ -674,7 +674,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
         relateOrganizersWithEvent(organizers, eventID);
 
         // Relate each expense to event
-        relateExpensesWithEvent(expenses, eventID);
+        relateExpensesWithEvent(expenses, eventID, true);
 
         return res.json({ success: true });
       });
@@ -1047,93 +1047,164 @@ function relateOrganizersWithEvent(organizers = [], eventID = null) {
   }
 }
 
-function relateExpensesWithEvent(expenses = [], eventID = null) {
+async function relateExpensesWithEvent(
+  expenses = [],
+  eventID = null,
+  createFile = false
+) {
   if (expenses && expenses.length && eventID) {
-    if (expenses && expenses.length) {
-      expenses.forEach(async (expense, index) => {
-        const {
-          event_expense_type_id: { _id: event_expense_type_id },
-          provider,
-          amount,
-          file,
-          file_uploaded,
-          file_base64,
-          comments,
-        } = expense;
+    let expensesFilesToDelete = [];
 
-        const eventExpenseTypeExists = await EventExpenseType.findById(
-          event_expense_type_id
-        );
-        if (eventExpenseTypeExists) {
-          const eventExpenseQuery = {
-            event_id: eventID,
-            event_expense_type_id,
+    // Get all event's expense's files
+    await EventExpense.find({ event_id: eventID }).then((eventExpenses) => {
+      if (eventExpenses) {
+        eventExpenses.forEach((eventExpense) => {
+          const expenseFile = eventExpense.filename;
+          // Delete event's expense's file
+          if (expenseFile) {
+            // expensesFilesToDelete[eventExpense.id] = expenseFile;
+            expensesFilesToDelete.push({ [eventExpense.id]: expenseFile });
+          }
+        });
+      }
+    });
+
+    console.log("expenses", expenses);
+
+    if (expenses && expenses.length) {
+      await Promise.all(
+        expenses.map(async (expense, index) => {
+          const {
+            event_expense_type_id: { _id: event_expense_type_id },
             provider,
             amount,
+            is_new: isNewExpense,
             file,
+            filename,
+            file_uploaded,
+            file_base64,
             comments,
-          };
+          } = expense;
 
-          await EventExpense.deleteMany({ event_id: eventID });
+          const eventExpenseTypeExists = await EventExpenseType.findById(
+            event_expense_type_id
+          );
+          if (eventExpenseTypeExists) {
+            console.log("eventExpenseTypeExists", eventExpenseTypeExists);
 
-          if (!file_uploaded) {
-            crypto.randomBytes(16, (err, hash) => {
-              if (err) {
-                return res.status(500).json({
-                  success: false,
-                  msg: err,
-                });
-              }
+            const eventExpenseQuery = {
+              event_id: eventID,
+              event_expense_type_id,
+              provider,
+              amount,
+              file,
+              filename,
+              comments,
+            };
 
-              const fileSplitted = file.split(".");
-              const fileExtension = fileSplitted.pop();
-              const fileNameStarted = slugify(fileSplitted.join("."));
-              const fileName = `${hash.toString(
-                "hex"
-              )}-${fileNameStarted}.${fileExtension}`;
-              eventExpenseQuery.file = fileName;
-
-              fs.writeFile(
-                `${path.resolve(
-                  __dirname,
-                  "..",
-                  "tmp",
-                  "uploads"
-                )}/${fileName}`,
-                file_base64,
-                "base64",
-                async (err, data) => {
-                  if (err) {
-                    return res.status(500).json({
-                      success: false,
-                      msg:
-                        err._message ||
-                        `Erro ao fazer upload do arquivo da despesa #${
-                          index + 1
-                        }`,
-                    });
-                  }
-                  await EventExpense.create(eventExpenseQuery);
+            expensesFilesToDelete = expensesFilesToDelete.filter(function (
+              expenseFileToDelete
+            ) {
+              const expenseFileIndex = Object.keys(expenseFileToDelete);
+              if (expenseFileIndex && expenseFileIndex[0]) {
+                const firstExpenseFileIndex = expenseFileIndex[0];
+                if (
+                  expenseFileToDelete[firstExpenseFileIndex] &&
+                  expenseFileToDelete[firstExpenseFileIndex] === filename
+                ) {
+                  return false;
                 }
-              );
+              }
+              return true;
             });
-          } else {
-            await EventExpense.create(eventExpenseQuery);
-          }
 
-          // Relate Expense to event
-          // await EventExpense.create(eventExpenseQuery);
-          // .catch((err) => {
-          //   return res.status(500).json({
-          //     success: false,
-          //     msg:
-          //       err._message ||
-          //       `Erro ao vincular a despesa "${provider}" ao evento ${name}`,
-          //   });
-          // });
-        }
-      });
+            if (isNewExpense) {
+              await EventExpense.create(eventExpenseQuery);
+            } else if (createFile && !file_uploaded) {
+              crypto.randomBytes(16, (err, hash) => {
+                if (!err) {
+                  const fileSplitted = file.split(".");
+                  const fileExtension = fileSplitted.pop();
+                  const fileNameStarted = slugify(fileSplitted.join("."));
+                  const fileName = `${hash.toString(
+                    "hex"
+                  )}-${fileNameStarted}.${fileExtension}`;
+                  eventExpenseQuery.file;
+                  eventExpenseQuery.filename = fileName;
+                  fs.writeFile(
+                    `${path.resolve(
+                      __dirname,
+                      "..",
+                      "tmp",
+                      "uploads"
+                    )}/${fileName}`,
+                    file_base64,
+                    "base64",
+                    async (err, data) => {
+                      if (err) {
+                        return res.status(500).json({
+                          success: false,
+                          msg:
+                            err._message ||
+                            `Erro ao fazer upload do arquivo da despesa #${
+                              index + 1
+                            }`,
+                        });
+                      }
+                      await EventExpense.create(eventExpenseQuery);
+                    }
+                  );
+                }
+              });
+            }
+
+            // Relate Expense to event
+            // await EventExpense.create(eventExpenseQuery);
+            // .catch((err) => {
+            //   return res.status(500).json({
+            //     success: false,
+            //     msg:
+            //       err._message ||
+            //       `Erro ao vincular a despesa "${provider}" ao evento ${name}`,
+            //   });
+            // });
+          }
+        })
+      );
     }
+
+    console.log("|| expensesFilesToDelete", expensesFilesToDelete);
+
+    // if (expensesFilesToDelete.length) {
+    //   for (let f = 0; f < expensesFilesToDelete.length; f++) {
+    //     const expenseFileIndex = Object.keys(expensesFilesToDelete[f]);
+    //     if (expenseFileIndex && expenseFileIndex[0]) {
+    //       const firstExpenseFileIndex = expenseFileIndex[0];
+    //       const fileToDelete = expensesFilesToDelete[f][firstExpenseFileIndex];
+    //       if (fileToDelete) {
+    //         const fileWithPath = `${path.resolve(
+    //           __dirname,
+    //           "..",
+    //           "tmp",
+    //           "uploads"
+    //         )}/${fileToDelete}`;
+
+    //         // Verify if file exists
+    //         fs.access(fileWithPath, fs.F_OK, async (err) => {
+    //           if (!err) {
+    //             fs.unlink(fileWithPath, async (err) => {
+    //               if (!err) {
+    //                 await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
+    //               }
+    //             });
+    //           } else {
+    //             await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
+    //           }
+    //         });
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 
