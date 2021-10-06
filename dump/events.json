@@ -1,11 +1,11 @@
 [{
   "_id": {
-    "$oid": "613009aebef41f263810499b"
+    "$oid": "614d15e63280ce4bf4dc6fc4"
   },
   "user_id": {
     "$oid": "6126a0d03c810a5b4cefa94c"
   },
-  "name": "Meu evento 152c",
+  "name": "Me ev",
   "event_type_id": {
     "$oid": "60f629f9551f062dc0a1e415"
   },
@@ -30,12 +30,12 @@
   "resources": "Recursos",
   "receipt_amount": 570.2,
   "total_amount": 1950.92,
-  "status": "revision",
+  "status": "created",
   "createdAt": {
-    "$date": "2021-09-01T23:15:58.406Z"
+    "$date": "2021-09-24T00:03:50.845Z"
   },
   "updatedAt": {
-    "$date": "2021-09-08T21:29:02.955Z"
+    "$date": "2021-10-06T22:49:48.822Z"
   },
   "__v": 0
 }]

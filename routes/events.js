@@ -1053,23 +1053,28 @@ async function relateExpensesWithEvent(
   createFile = false
 ) {
   if (expenses && expenses.length && eventID) {
-    let expensesFilesToDelete = [];
+    const expensesFilesToDelete = [];
+    const expensesFilesSetted = [];
 
-    // Get all event's expense's files
+    // Get all event's expense's files in request
+    expenses.filter((expense) => {
+      if (expense.file && expense.file_uploaded) {
+        expensesFilesSetted.push(expense.file);
+      }
+    });
+
+    // Get all event's expense's files already in database
     await EventExpense.find({ event_id: eventID }).then((eventExpenses) => {
       if (eventExpenses) {
         eventExpenses.forEach((eventExpense) => {
           const expenseFile = eventExpense.filename;
-          // Delete event's expense's file
-          if (expenseFile) {
-            // expensesFilesToDelete[eventExpense.id] = expenseFile;
+          if (expenseFile && !expensesFilesSetted.includes(eventExpense.file)) {
+            // Add expense's file removed to deleteArray
             expensesFilesToDelete.push({ [eventExpense.id]: expenseFile });
           }
         });
       }
     });
-
-    console.log("expenses", expenses);
 
     if (expenses && expenses.length) {
       await Promise.all(
@@ -1090,8 +1095,6 @@ async function relateExpensesWithEvent(
             event_expense_type_id
           );
           if (eventExpenseTypeExists) {
-            console.log("eventExpenseTypeExists", eventExpenseTypeExists);
-
             const eventExpenseQuery = {
               event_id: eventID,
               event_expense_type_id,
@@ -1102,25 +1105,25 @@ async function relateExpensesWithEvent(
               comments,
             };
 
-            expensesFilesToDelete = expensesFilesToDelete.filter(function (
-              expenseFileToDelete
-            ) {
-              const expenseFileIndex = Object.keys(expenseFileToDelete);
-              if (expenseFileIndex && expenseFileIndex[0]) {
-                const firstExpenseFileIndex = expenseFileIndex[0];
-                if (
-                  expenseFileToDelete[firstExpenseFileIndex] &&
-                  expenseFileToDelete[firstExpenseFileIndex] === filename
-                ) {
-                  return false;
-                }
-              }
-              return true;
-            });
+            // expensesFilesToDelete = expensesFilesToDelete.filter(function (
+            //   expenseFileToDelete
+            // ) {
+            //   const expenseFileIndex = Object.keys(expenseFileToDelete);
+            //   if (expenseFileIndex && expenseFileIndex[0]) {
+            //     const firstExpenseFileIndex = expenseFileIndex[0];
+            //     if (
+            //       expenseFileToDelete[firstExpenseFileIndex] &&
+            //       expenseFileToDelete[firstExpenseFileIndex] === filename
+            //     ) {
+            //       return false;
+            //     }
+            //   }
+            //   return true;
+            // });
 
             if (isNewExpense) {
               await EventExpense.create(eventExpenseQuery);
-            } else if (createFile && !file_uploaded) {
+            } else if (createFile && !file_uploaded && file) {
               crypto.randomBytes(16, (err, hash) => {
                 if (!err) {
                   const fileSplitted = file.split(".");
@@ -1173,38 +1176,36 @@ async function relateExpensesWithEvent(
       );
     }
 
-    console.log("|| expensesFilesToDelete", expensesFilesToDelete);
+    if (expensesFilesToDelete.length) {
+      for (let f = 0; f < expensesFilesToDelete.length; f++) {
+        const expenseFileIndex = Object.keys(expensesFilesToDelete[f]);
+        if (expenseFileIndex && expenseFileIndex[0]) {
+          const firstExpenseFileIndex = expenseFileIndex[0];
+          const fileToDelete = expensesFilesToDelete[f][firstExpenseFileIndex];
+          if (fileToDelete) {
+            const fileWithPath = `${path.resolve(
+              __dirname,
+              "..",
+              "tmp",
+              "uploads"
+            )}/${fileToDelete}`;
 
-    // if (expensesFilesToDelete.length) {
-    //   for (let f = 0; f < expensesFilesToDelete.length; f++) {
-    //     const expenseFileIndex = Object.keys(expensesFilesToDelete[f]);
-    //     if (expenseFileIndex && expenseFileIndex[0]) {
-    //       const firstExpenseFileIndex = expenseFileIndex[0];
-    //       const fileToDelete = expensesFilesToDelete[f][firstExpenseFileIndex];
-    //       if (fileToDelete) {
-    //         const fileWithPath = `${path.resolve(
-    //           __dirname,
-    //           "..",
-    //           "tmp",
-    //           "uploads"
-    //         )}/${fileToDelete}`;
-
-    //         // Verify if file exists
-    //         fs.access(fileWithPath, fs.F_OK, async (err) => {
-    //           if (!err) {
-    //             fs.unlink(fileWithPath, async (err) => {
-    //               if (!err) {
-    //                 await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
-    //               }
-    //             });
-    //           } else {
-    //             await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
-    //           }
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
+            // Verify if file exists
+            fs.access(fileWithPath, fs.F_OK, async (err) => {
+              if (!err) {
+                fs.unlink(fileWithPath, async (err) => {
+                  if (!err) {
+                    await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
+                  }
+                });
+              } else {
+                await EventExpense.findByIdAndDelete(firstExpenseFileIndex);
+              }
+            });
+          }
+        }
+      }
+    }
   }
 }
 
