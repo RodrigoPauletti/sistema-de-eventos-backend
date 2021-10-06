@@ -5,7 +5,7 @@
   "user_id": {
     "$oid": "6126a0d03c810a5b4cefa94c"
   },
-  "name": "Me ev",
+  "name": "Meu evento",
   "event_type_id": {
     "$oid": "60f629f9551f062dc0a1e415"
   },

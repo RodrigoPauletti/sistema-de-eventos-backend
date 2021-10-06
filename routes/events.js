@@ -109,6 +109,7 @@ router.post("/all", reqAuth, async function (req, res) {
               } else {
                 ev.date = startDate;
               }
+              ev.calendar_dates = [toDateFormatted(item.dates[0].start_date, true)];
             } else {
               // Event has more than one date
               const startDate = toDateFormatted(
@@ -125,6 +126,9 @@ router.post("/all", reqAuth, async function (req, res) {
               } else {
                 ev.date = startDate;
               }
+              ev.calendar_dates = item.dates.map((itemDate) =>
+                toDateFormatted(itemDate.start_date, true)
+              );
             }
           }
           ev.dates = undefined;
