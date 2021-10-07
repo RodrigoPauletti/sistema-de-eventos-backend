@@ -53,7 +53,7 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-// app.use(cors());webURL
+// app.use(cors());
 
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
