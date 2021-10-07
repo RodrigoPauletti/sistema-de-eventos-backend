@@ -53,7 +53,12 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-app.use(cors());
+// app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  app.use(cors());
+  next();
+});
 
 // Express body parser
 app.use("/public", express.static("public"));
