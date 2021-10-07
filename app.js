@@ -53,44 +53,38 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-const corsOptions = {
-  origin: "*",
-  // methods: "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-};
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-app.use(cors(corsOptions));
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
 
-// app.use(function (req, res, next) {
-//   // Website you wish to allow to connect
-//   res.setHeader("Access-Control-Allow-Origin", "*");
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+    // "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, contenttype"
+  );
+  // res.setHeader(
+  //   "Access-Control-Allow-Headers",
+  //   "X-Requested-With,content-type"
+  //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  //   "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+  // );
 
-//   // Request methods you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-//   // Request headers you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, contenttype"
-//   );
-//   // res.setHeader(
-//   //   "Access-Control-Allow-Headers",
-//   //   "X-Requested-With,content-type"
-//   //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   //   "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
-//   // );
+  // app.use(cors());
 
-//   // Set to true if you need the website to include cookies in the requests sent
-//   // to the API (e.g. in case you use sessions)
-//   res.setHeader("Access-Control-Allow-Credentials", true);
-
-//   // app.use(cors());
-
-//   // Pass to next layer of middleware
-//   next();
-// });
+  // Pass to next layer of middleware
+  next();
+});
 
 // Express body parser
 app.use("/public", express.static("public"));
