@@ -53,7 +53,7 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-// app.use(cors());
+app.use(cors());
 
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
@@ -68,11 +68,12 @@ app.use(function (req, res, next) {
   // Request headers you wish to allow
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Type"
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
   );
   // res.setHeader(
   //   "Access-Control-Allow-Headers",
   //   "X-Requested-With,content-type"
+  //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   //   "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
   // );
 
