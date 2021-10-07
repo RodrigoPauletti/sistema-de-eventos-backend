@@ -17,18 +17,19 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
+// dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
 
 // for PRODUCTION
-// const MONGO_USERNAME = 'sammy';
-// const MONGO_PASSWORD = 'your_password';
-// const MONGO_HOSTNAME = '127.0.0.1';
-// const MONGO_PORT = '27017';
-// const MONGO_DB = 'sharkinfo';
+const MONGO_USERNAME = "dbUser";
+const MONGO_PASSWORD = "5lwtwr6RbagOgLYY";
+const MONGO_HOSTNAME = "cluster0.3o6py.mongodb.net";
+const MONGO_PORT = "27017";
+const MONGO_DB = "sistema-eventos";
 
-// const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
 
 module.exports = {
-  mongoURI: dbPasswordDev,
-  secret: "yourSecretKey",
+  // mongoURI: dbPasswordDev,
+  // secret: "yourSecretKey",
+  mongoURI: url,
 };
