@@ -30,6 +30,6 @@ const url = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${M
 
 module.exports = {
   // mongoURI: dbPasswordDev,
-  // secret: "yourSecretKey",
   mongoURI: url,
+  secret: "wpuJxLWvAkm1lccmXz0XCsn5HWwVGj0j5EGigZDJGk8zoVXmoYRWNWYCl9lNDMWj",
 };
