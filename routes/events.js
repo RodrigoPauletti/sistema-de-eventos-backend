@@ -623,7 +623,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           : oldStatus === "revision" && adminChanging // Se o status antigo é "Em revisão" e o usuário que está alterando é um admin ("2", "3", "5"), é alterado para "Corrigir"
           ? "correct"
           : oldStatus
-        : send_to_review;
+        : oldStatus;
 
       // TODO: Detectar alteração de status "Reprovado", "Aprovado" e "Finalizado"
 
