@@ -55,7 +55,10 @@ mongoose
 
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://famur-events-frontend.herokuapp.com"
+  );
 
   // Request methods you wish to allow
   res.setHeader(
