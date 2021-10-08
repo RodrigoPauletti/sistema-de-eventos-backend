@@ -109,7 +109,9 @@ router.post("/all", reqAuth, async function (req, res) {
               } else {
                 ev.date = startDate;
               }
-              ev.calendar_dates = [toDateFormatted(item.dates[0].start_date, true)];
+              ev.calendar_dates = [
+                toDateFormatted(item.dates[0].start_date, true),
+              ];
             } else {
               // Event has more than one date
               const startDate = toDateFormatted(
@@ -621,7 +623,7 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           : oldStatus === "revision" && adminChanging // Se o status antigo é "Em revisão" e o usuário que está alterando é um admin ("2", "3", "5"), é alterado para "Corrigir"
           ? "correct"
           : oldStatus
-        : oldStatus;
+        : send_to_review;
 
       // TODO: Detectar alteração de status "Reprovado", "Aprovado" e "Finalizado"
 
