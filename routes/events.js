@@ -312,12 +312,15 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         {
           path: "lecturers",
           select: "lecturer_id type",
-          populate: { path: "lecturer_id", select: "name office lattes" },
+          populate: { path: "lecturer_id", select: "name office lattes email" },
         },
         {
           path: "organizers",
           select: "organizer_id office workload",
-          populate: { path: "organizer_id", select: "name identification" },
+          populate: {
+            path: "organizer_id",
+            select: "name identification email",
+          },
         },
         {
           path: "expenses",
@@ -371,9 +374,18 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         if (lecturers && lecturers.length) {
           lecturers = lecturers.map(function (lecturer) {
             const lect = lecturer.toJSON();
+            if (!lecturer.lecturer_id) {
+              lecturer.lecturer_id = {
+                name: null,
+                office: null,
+                email: null,
+                lattes: null,
+              };
+            }
             lect.name = lecturer.lecturer_id.name;
             lect.office = lecturer.lecturer_id.office;
             lect.lattes = lecturer.lecturer_id.lattes;
+            lect.email = lecturer.lecturer_id.email;
             lect.guest = lecturer.type === "guest";
             lect.type = undefined;
             lect.event_id = undefined;
@@ -384,8 +396,16 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         if (organizers && organizers.length) {
           organizers = organizers.map(function (organizer) {
             const org = organizer.toJSON();
+            if (!organizer.organizer_id) {
+              organizer.organizer_id = {
+                name: null,
+                identification: null,
+                email: null,
+              };
+            }
             org.name = organizer.organizer_id.name;
             org.identification = organizer.organizer_id.identification;
+            org.email = organizer.organizer_id.email;
             org.event_id = undefined;
             return org;
           });
@@ -413,14 +433,17 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             {
               path: "lecturers",
               select: "lecturer_id type",
-              populate: { path: "lecturer_id", select: "name office lattes" },
+              populate: {
+                path: "lecturer_id",
+                select: "name office lattes email",
+              },
             },
             {
               path: "organizers",
               select: "organizer_id office workload",
               populate: {
                 path: "organizer_id",
-                select: "name identification",
+                select: "name identification email",
               },
             },
             {
@@ -461,11 +484,21 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
                 if (history.lecturers && history.lecturers.length) {
                   history.lecturers = history.lecturers.map(
                     (historyLecturer) => {
+                      if (!historyLecturer.lecturer_id) {
+                        historyLecturer.lecturer_id = {
+                          name: null,
+                          office: null,
+                          email: null,
+                          lattes: null,
+                        };
+                      }
                       historyLecturer.infos = `${
                         historyLecturer.lecturer_id.name
                       } | ${historyLecturer.lecturer_id.office} | ${
-                        historyLecturer.lecturer_id.lattes
-                      } | ${historyLecturer.type === "guest" ? "Sim" : "Não"}`;
+                        historyLecturer.lecturer_id.email
+                      } | ${historyLecturer.lecturer_id.lattes} | ${
+                        historyLecturer.type === "guest" ? "Sim" : "Não"
+                      }`;
                       historyLecturer.type = undefined;
                       historyLecturer.lecturer_id = undefined;
                       return historyLecturer;
@@ -475,10 +508,19 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
                 if (history.organizers && history.organizers.length) {
                   history.organizers = history.organizers.map(
                     (historyOrganizer) => {
+                      if (!historyOrganizer.organizer_id) {
+                        historyOrganizer.organizer_id = {
+                          name: null,
+                          identification: null,
+                          email: null,
+                        };
+                      }
                       historyOrganizer.infos = `${
                         historyOrganizer.organizer_id.name
                       } | ${historyOrganizer.organizer_id.identification} | ${
                         historyOrganizer.office
+                      } | ${
+                        historyOrganizer.organizer_id.email
                       } | ${historyOrganizer.workload.toString()}h`;
                       historyOrganizer.office = undefined;
                       historyOrganizer.workload = undefined;
@@ -942,7 +984,7 @@ function relateLecturersWithEvent(lecturers = [], eventID = null) {
   if (lecturers && lecturers.length && eventID) {
     if (lecturers && lecturers.length) {
       lecturers.forEach(async (lecturer) => {
-        const { name: lecturerName, office, lattes, guest } = lecturer;
+        const { name: lecturerName, office, lattes, email, guest } = lecturer;
         const lecturerAlreadyExists = await Lecturer.findOne({
           name: lecturerName,
         });
@@ -955,6 +997,7 @@ function relateLecturersWithEvent(lecturers = [], eventID = null) {
             name: lecturerName,
             office,
             lattes,
+            email,
             status: "1",
           };
           const newLecturer = await Lecturer.create(lecturerQuery);
@@ -1001,6 +1044,7 @@ function relateOrganizersWithEvent(organizers = [], eventID = null) {
           name: organizerName,
           identification,
           office,
+          email,
           workload,
         } = organizer;
         const organizerAlreadyExists = await Organizer.findOne({
@@ -1014,6 +1058,7 @@ function relateOrganizersWithEvent(organizers = [], eventID = null) {
           const organizerQuery = {
             name: organizerName,
             identification,
+            email,
             status: "1",
           };
           const newOrganizer = await Organizer.create(organizerQuery);

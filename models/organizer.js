@@ -25,6 +25,9 @@ const OrganizerSchema = new mongoose.Schema(
     //   type: String,
     //   required: true,
     // },
+    email: {
+      type: String,
+    },
     status: {
       type: String,
       enum: {

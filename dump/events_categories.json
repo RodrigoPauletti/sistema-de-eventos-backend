@@ -1,40 +1,40 @@
 [{
   "_id": {
-    "$oid": "60f62a2a551f062dc0a1e419"
-  },
-  "name": "Atividade da Sala de Aula 3",
-  "secondary_field": "1",
-  "secondary_field_name": "NOME ATIVIDADE",
-  "status": "1",
-  "createdAt": {
-    "$date": "2021-07-20T01:43:06.827Z"
-  },
-  "updatedAt": {
-    "$date": "2021-07-20T01:43:06.827Z"
-  },
-  "__v": 0
-},{
-  "_id": {
-    "$oid": "6143b3749340be4404167b41"
-  },
-  "name": "Atividade da Sala de Aula 22",
-  "secondary_field": "1",
-  "secondary_field_name": "aqui",
-  "status": "1",
-  "createdAt": {
-    "$date": "2021-09-16T21:13:24.356Z"
-  },
-  "updatedAt": {
-    "$date": "2021-09-16T21:13:24.356Z"
-  },
-  "__v": 0
-},{
-  "_id": {
     "$oid": "6143b37a9340be4404167b43"
   },
-  "name": "Atividade da Sala de Aula 12",
+  "name": "On-line",
   "secondary_field": "0",
-  "secondary_field_name": "aqui",
+  "secondary_field_name": "",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-09-16T21:13:30.163Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-16T21:13:30.163Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171fe09898047b54ecbc8de"
+  },
+  "name": "Presencial",
+  "secondary_field": "0",
+  "secondary_field_name": "",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-09-16T21:13:30.163Z"
+  },
+  "updatedAt": {
+    "$date": "2021-09-16T21:13:30.163Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171fe17898047b54ecbc8df"
+  },
+  "name": "Híbrido",
+  "secondary_field": "0",
+  "secondary_field_name": "",
   "status": "1",
   "createdAt": {
     "$date": "2021-09-16T21:13:30.163Z"

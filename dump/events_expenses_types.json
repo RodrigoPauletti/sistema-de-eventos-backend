@@ -2,7 +2,7 @@
   "_id": {
     "$oid": "6113056495cf4203f8a2fbf6"
   },
-  "name": "Seminário",
+  "name": "Alimentação",
   "status": "1",
   "createdAt": {
     "$date": "2021-07-20T01:42:17.632Z"
@@ -15,7 +15,7 @@
   "_id": {
     "$oid": "6113056a95cf4203f8a2fbf7"
   },
-  "name": "Materiais",
+  "name": "Cachê Palestrante",
   "status": "1",
   "createdAt": {
     "$date": "2021-07-20T01:42:17.632Z"
@@ -28,7 +28,85 @@
   "_id": {
     "$oid": "6113056e95cf4203f8a2fbf8"
   },
-  "name": "Brindes",
+  "name": "Divulgação Digital",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171feda898047b54ecbc8e6"
+  },
+  "name": "Decoração",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171fee8898047b54ecbc8e7"
+  },
+  "name": "Sonorização | Iluminação",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171feee898047b54ecbc8e8"
+  },
+  "name": "Material de Divulgação Impresso",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171fef4898047b54ecbc8e9"
+  },
+  "name": "Presente",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171fefb898047b54ecbc8ea"
+  },
+  "name": "Transporte",
+  "status": "1",
+  "createdAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-20T01:42:17.632Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6171feff898047b54ecbc8eb"
+  },
+  "name": "Outro",
   "status": "1",
   "createdAt": {
     "$date": "2021-07-20T01:42:17.632Z"

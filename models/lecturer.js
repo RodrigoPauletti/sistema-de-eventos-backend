@@ -23,6 +23,9 @@ const LecturerSchema = new mongoose.Schema(
     lattes: {
       type: String,
     },
+    email: {
+      type: String,
+    },
     status: {
       type: String,
       enum: {

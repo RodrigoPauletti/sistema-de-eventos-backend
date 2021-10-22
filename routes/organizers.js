@@ -28,9 +28,9 @@ router.post("/allActivated", reqAuth, function (req, res) {
 });
 
 router.post("/create", (req, res) => {
-  const { name, identification, status } = req.body;
+  const { name, identification, email, status } = req.body;
 
-  const query = { name, identification, status };
+  const query = { name, identification, email, status };
   Organizer.create(query, function (err, organizer) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
@@ -63,13 +63,13 @@ router.post("/create", (req, res) => {
 
 router.post("/edit/:organizerID", reqAuth, function (req, res) {
   const { organizerID } = req.params;
-  const { name, identification, status } = req.body;
+  const { name, identification, email, status } = req.body;
 
   Organizer.find({ _id: organizerID }).then((organizer) => {
     if (organizer.length === 1) {
       const query = { _id: organizer[0]._id };
       const newvalues = {
-        $set: { name, identification, status },
+        $set: { name, identification, email, status },
       };
       Organizer.updateOne(query, newvalues, function (err, cb) {
         if (err) {

@@ -28,9 +28,9 @@ router.post("/allActivated", reqAuth, function (req, res) {
 });
 
 router.post("/create", (req, res) => {
-  const { name, office, lattes, status } = req.body;
+  const { name, office, lattes, email, status } = req.body;
 
-  const query = { name, office, lattes, status };
+  const query = { name, office, lattes, email, status };
   Lecturer.create(query, function (err, lecturer) {
     if (err) {
       if (err.name === "MongoError" && err.code === 11000) {
@@ -63,13 +63,13 @@ router.post("/create", (req, res) => {
 
 router.post("/edit/:lecturerID", reqAuth, function (req, res) {
   const { lecturerID } = req.params;
-  const { name, office, lattes, status } = req.body;
+  const { name, office, lattes, email, status } = req.body;
 
   Lecturer.find({ _id: lecturerID }).then((lecturer) => {
     if (lecturer.length === 1) {
       const query = { _id: lecturer[0]._id };
       const newvalues = {
-        $set: { name, office, lattes, status },
+        $set: { name, office, lattes, email, status },
       };
       Lecturer.updateOne(query, newvalues, function (err, cb) {
         if (err) {
