@@ -205,17 +205,17 @@ router.post("/create", reqAuth, async (req, res) => {
       category_second_field_value,
       coverage_id,
       coverage_second_field_value,
-      workload,
-      place,
-      audience_estimate,
-      online,
-      link,
-      ticket,
+      // workload,
+      // place,
+      // audience_estimate,
+      // online,
+      // link,
+      // ticket,
       objective,
       reason,
-      schedule,
-      details,
-      resources,
+      // schedule,
+      // details,
+      // resources,
       receipt_amount,
       total_amount,
       status: send_to_review ? "revision" : "created", // Se é alteração do status, é alterado para "Em revisão"
@@ -308,7 +308,11 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
     return Event.findOne({ _id: eventID })
       .populate([
         { path: "user_id", select: "name" },
-        { path: "dates", select: "start_date end_date" },
+        {
+          path: "dates",
+          select:
+            "start_date end_date workload place audience_estimate online link ticket schedule details resources",
+        },
         {
           path: "lecturers",
           select: "lecturer_id type",
@@ -364,6 +368,15 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             dt.date = toDateFormatted(date.start_date, true);
             dt.start_time = transformDateToTime(date.start_date);
             dt.end_time = transformDateToTime(date.end_date);
+            dt.workload = date.workload;
+            dt.place = date.place;
+            dt.audience_estimate = date.audience_estimate;
+            dt.online = date.online;
+            dt.link = date.link;
+            dt.ticket = date.ticket;
+            dt.schedule = date.schedule;
+            dt.details = date.details;
+            dt.resources = date.resources;
             dt.event_id = undefined;
             dt.start_date = undefined;
             dt.end_date = undefined;
@@ -577,17 +590,17 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
       second_field_value: coverage_second_field_value,
     },
     dates,
-    workload,
-    place,
-    audience_estimate,
-    online,
-    link,
-    ticket,
+    // workload,
+    // place,
+    // audience_estimate,
+    // online,
+    // link,
+    // ticket,
     objective,
     reason,
-    schedule,
-    details,
-    resources,
+    // schedule,
+    // details,
+    // resources,
     lecturers,
     organizers,
     expenses,
@@ -678,17 +691,17 @@ router.post("/edit/:eventID", reqAuth, function (req, res) {
           category_second_field_value,
           coverage_id,
           coverage_second_field_value,
-          workload,
-          place,
-          audience_estimate,
-          online,
-          link,
-          ticket,
+          // workload,
+          // place,
+          // audience_estimate,
+          // online,
+          // link,
+          // ticket,
           objective,
           reason,
-          schedule,
-          details,
-          resources,
+          // schedule,
+          // details,
+          // resources,
           receipt_amount,
           total_amount,
           status: newStatus,
@@ -963,6 +976,15 @@ function relateDatesWithEvent(dates = [], eventID = null) {
         end_date: `${new Date(
           `${date.date}T${date.end_time}:00.000Z`
         ).toISOString()}`,
+        workload: date.workload,
+        place: date.place,
+        audience_estimate: date.audience_estimate,
+        online: date.online,
+        link: date.link,
+        ticket: date.ticket,
+        schedule: date.schedule,
+        details: date.details,
+        resources: date.resources,
       };
 
       await EventDate.deleteMany({ event_id: eventID });
