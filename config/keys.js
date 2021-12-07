@@ -17,7 +17,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-// dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
+dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
 
 // for PRODUCTION
 const MONGO_USERNAME = "sistemaDeEventosUser";
@@ -28,7 +28,7 @@ const MONGO_DB = "sistema-eventos";
 const url = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}/${MONGO_DB}?retryWrites=true&w=majority`;
 
 module.exports = {
-  // mongoURI: dbPasswordDev,
-  mongoURI: url,
+  // mongoURI: dbPasswordDev, // LOCAL
+  mongoURI: url, // ONLINE
   secret: "wpuJxLWvAkm1lccmXz0XCsn5HWwVGj0j5EGigZDJGk8zoVXmoYRWNWYCl9lNDMWj",
 };

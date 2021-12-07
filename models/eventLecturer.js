@@ -20,6 +20,9 @@ const EventLecturerSchema = new mongoose.Schema(
       },
       required: true,
     },
+    dates: {
+      type: Array,
+    },
   },
   {
     collection: "events_lecturers",

@@ -27,6 +27,6 @@ module.exports = {
       pass: "password", // Gmail password
     },
   },
-  // webURL: "https://localhost:5100/",
-  webURL: "https://famur-events-backend.herokuapp.com/",
+  // webURL: "https://localhost:5100/", // LOCAL
+  webURL: "https://famur-events-backend.herokuapp.com/", // ONLINE
 };

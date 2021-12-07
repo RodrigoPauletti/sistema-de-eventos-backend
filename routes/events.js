@@ -315,7 +315,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
         },
         {
           path: "lecturers",
-          select: "lecturer_id type",
+          select: "lecturer_id type dates",
           populate: { path: "lecturer_id", select: "name office lattes email" },
         },
         {
@@ -400,6 +400,7 @@ router.post("/get/:eventID", reqAuth, async function (req, res) {
             lect.lattes = lecturer.lecturer_id.lattes;
             lect.email = lecturer.lecturer_id.email;
             lect.guest = lecturer.type === "guest";
+            lect.dates = lecturer.dates;
             lect.type = undefined;
             lect.event_id = undefined;
             return lect;
@@ -1006,7 +1007,14 @@ function relateLecturersWithEvent(lecturers = [], eventID = null) {
   if (lecturers && lecturers.length && eventID) {
     if (lecturers && lecturers.length) {
       lecturers.forEach(async (lecturer) => {
-        const { name: lecturerName, office, lattes, email, guest } = lecturer;
+        const {
+          name: lecturerName,
+          office,
+          lattes,
+          email,
+          guest,
+          dates,
+        } = lecturer;
         const lecturerAlreadyExists = await Lecturer.findOne({
           name: lecturerName,
         });
@@ -1039,6 +1047,7 @@ function relateLecturersWithEvent(lecturers = [], eventID = null) {
           event_id: eventID,
           lecturer_id,
           type: guest ? "guest" : "lecturer",
+          dates: dates && dates.length ? dates.map((date) => !!date) : [],
         };
 
         await EventLecturer.deleteMany({ event_id: eventID });

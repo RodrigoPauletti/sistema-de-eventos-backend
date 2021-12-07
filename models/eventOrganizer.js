@@ -20,6 +20,9 @@ const EventOrganizerSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    dates: {
+      type: Array,
+    },
   },
   {
     collection: "events_organizers",
