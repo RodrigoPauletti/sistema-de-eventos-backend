@@ -89,11 +89,11 @@ const EventSchema = new mongoose.Schema(
     // },
     receipt_amount: {
       type: Number,
-      required: true,
+      // required: true,
     },
     total_amount: {
       type: Number,
-      required: true,
+      // required: true,
     },
     status: {
       type: String,
