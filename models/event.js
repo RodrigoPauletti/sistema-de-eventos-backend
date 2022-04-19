@@ -22,7 +22,7 @@ const EventSchema = new mongoose.Schema(
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EventCategory",
-      required: true,
+      required: 'O campo "Modalidade" é obrigatório',
     },
     category_second_field_value: {
       type: String,
@@ -30,7 +30,7 @@ const EventSchema = new mongoose.Schema(
     coverage_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EventCoverage",
-      required: true,
+      required: 'O campo "Abrangência" é obrigatório',
     },
     coverage_second_field_value: {
       type: String,
@@ -70,11 +70,11 @@ const EventSchema = new mongoose.Schema(
     // },
     objective: {
       type: String,
-      required: true,
+      required: 'O campo "Objetivo" é obrigatório',
     },
     reason: {
       type: String,
-      required: true,
+      required: 'O campo "Justificativa" é obrigatório',
     },
     // schedule: {
     //   type: String,
