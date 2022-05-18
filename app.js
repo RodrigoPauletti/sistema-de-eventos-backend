@@ -73,9 +73,8 @@ if (process.env.NODE_ENV === "PROD") {
   });
 }
 
-const router = express.Router();
-router.get("/", async function (req, res) {
-  return res.send('Hello World!');
+app.get('/', function (req, res) {
+  res.send('Hello World!');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
