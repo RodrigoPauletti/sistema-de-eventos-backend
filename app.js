@@ -53,12 +53,15 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-app.use(cors({
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": true,
-  "optionsSuccessStatus": 204
-}));
+// app.use(cors({
+//   "origin": "*",
+//   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   "preflightContinue": false,
+//   "optionsSuccessStatus": 204
+// }));
+app.use(cors());
+
+app.options('*', cors()) // include before other routes
 
 // Express body parser
 app.use("/public", express.static("public"));
@@ -74,7 +77,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!2');
+  res.send('Hello World!3');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
