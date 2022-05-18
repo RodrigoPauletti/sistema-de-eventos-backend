@@ -80,7 +80,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!7');
+  res.send('Hello World!8');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
