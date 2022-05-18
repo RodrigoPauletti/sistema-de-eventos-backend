@@ -61,7 +61,8 @@ mongoose
 //   "optionsSuccessStatus": 204
 // }));
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  optionsSuccessStatus: 200
 }));
 
 // app.options('*', cors()) // include before other routes
@@ -80,7 +81,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!8');
+  res.send('Hello World!9');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
