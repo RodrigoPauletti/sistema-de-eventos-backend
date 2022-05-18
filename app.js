@@ -53,15 +53,16 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
+app.use(cors());
 // app.use(cors({
 //   "origin": "*",
 //   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
 //   "preflightContinue": false,
 //   "optionsSuccessStatus": 204
 // }));
-app.use(cors({
-  allowedHeaders: '*'
-}));
+// app.use(cors({
+//   allowedHeaders: '*'
+// }));
 
 // app.options('*', cors()) // include before other routes
 
@@ -79,7 +80,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!6');
+  res.send('Hello World!7');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));

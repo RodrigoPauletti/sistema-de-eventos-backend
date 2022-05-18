@@ -241,9 +241,7 @@ router.post("/confirm/:id", (req, res) => {
   });
 });
 
-const cors = require("cors");
-
-router.post("/login", cors(), (req, res) => {
+router.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
