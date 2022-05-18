@@ -56,7 +56,7 @@ mongoose
 app.use(cors({
   "origin": "*",
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
+  "preflightContinue": true,
   "optionsSuccessStatus": 204
 }));
 
@@ -74,7 +74,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!');
+  res.send('Hello World!2');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
