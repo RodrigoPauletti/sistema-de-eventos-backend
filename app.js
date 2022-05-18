@@ -59,9 +59,11 @@ mongoose
 //   "preflightContinue": false,
 //   "optionsSuccessStatus": 204
 // }));
-app.use(cors());
+app.use(cors({
+  allowedHeaders: '*'
+}));
 
-app.options('*', cors()) // include before other routes
+// app.options('*', cors()) // include before other routes
 
 // Express body parser
 app.use("/public", express.static("public"));
@@ -77,7 +79,7 @@ if (process.env.NODE_ENV === "PROD") {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World!3');
+  res.send('Hello World!4');
 });
 
 app.use("/files", express.static(path.resolve(__dirname, "tmp", "uploads")));
