@@ -21,11 +21,11 @@ dbPasswordDev = "mongodb://localhost/sistema-de-eventos";
 
 // for PRODUCTION
 const MONGO_USERNAME = "sistemaDeEventosUser";
-const MONGO_PASSWORD = "bhnCkdiaxW5h4h42";
-const MONGO_HOSTNAME = "cluster0.3o6py.mongodb.net";
+const MONGO_PASSWORD = "kViYRPg15azWImUd";
+const MONGO_HOSTNAME = "cluster0.fzwkxhg.mongodb.net";
 const MONGO_DB = "sistema-eventos";
 
-const url = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}/${MONGO_DB}?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}/${MONGO_DB}?retryWrites=true&w=majority&appName=Cluster0`;
 
 module.exports = {
   // mongoURI: dbPasswordDev, // LOCAL
